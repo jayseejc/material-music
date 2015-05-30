@@ -10,17 +10,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.jayseeofficial.materialmusic.R;
+import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
+import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
+import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class LibraryViewActivity extends BaseActivity {
+
+    enum Mode {
+        SONGS, ALBUMS, ARTISTS, PLAYLISTS
+    }
 
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -34,21 +42,26 @@ public class LibraryViewActivity extends BaseActivity {
     @InjectView(R.id.tb_main)
     Toolbar tbMain;
 
+    @InjectView(R.id.img_nav_header)
+    ImageView imgNavHeader;
+
     @OnClick(R.id.btn_next)
-    public void nextTrack(){
+    public void nextTrack() {
     }
 
     @OnClick(R.id.btn_prev)
-    public void previousTrack(){
+    public void previousTrack() {
     }
 
     @InjectView(R.id.btn_play)
     ImageButton btnPlay;
 
     @OnClick(R.id.btn_play)
-    public void toggleTrack(){
+    public void toggleTrack() {
         SongPlayer.toggleSong();
     }
+
+    private Mode mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +72,18 @@ public class LibraryViewActivity extends BaseActivity {
 
         setSupportActionBar(tbMain);
 
-        navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
-        drawerLayout.openDrawer(GravityCompat.START);
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            int id = menuItem.getItemId();
+            if (id == R.id.action_songs) {
+                setMode(Mode.SONGS);
+            }
+            if (id == R.id.action_albums) {
+                setMode(Mode.ALBUMS);
+            }
+            return false;
+        });
+
+        setMode(Mode.SONGS);
 
         rvSongList.setLayoutManager(new LinearLayoutManager(this));
         rvSongList.setAdapter(new SongRecyclerAdapter(this));
@@ -90,16 +113,41 @@ public class LibraryViewActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEventMainThread(PlaybackEvent event){
+    public void onEventMainThread(PlaybackEvent event) {
         refreshPlayIcon();
+        Song currentSong = SongPlayer.getCurrentSong();
+        if (currentSong != null) {
+            Picasso.with(this)
+                    .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
+                    .error(R.drawable.nav_header_image)
+                    .resize(imgNavHeader.getWidth(),imgNavHeader.getHeight())
+                    .into(imgNavHeader);
+        } else {
+            imgNavHeader.setImageResource(R.drawable.nav_header_image);
+        }
     }
 
-    private void refreshPlayIcon(){
-        if(SongPlayer.isPlaying()){
+    private void refreshPlayIcon() {
+        if (SongPlayer.isPlaying()) {
             btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
         } else {
             btnPlay.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
         }
+    }
+
+    private void setMode(Mode mode) {
+        this.mode = mode;
+        switch (mode) {
+            case SONGS:
+                navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
+                break;
+            case ALBUMS:
+                navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
+                break;
+            case ARTISTS:
+                break;
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
     }
 
 }

@@ -4,5 +4,10 @@
         <item
             android:id="@+id/action_songs"
             android:title="Songs" />
+        <item
+            android:id="@+id/action_albums"
+            android:title="Albums" />
+        <item android:id="@+id/action_artisis"
+            android:title="Artists" />
     </group>
 </menu>

@@ -18,6 +18,7 @@ import de.greenrobot.event.EventBus;
 public class SongPlayer {
 
     private static MediaPlayer mediaPlayer;
+    private static Song currentSong = null;
 
     public static void playSong(Context context, Song song) {
         stopSong();
@@ -27,9 +28,11 @@ public class SongPlayer {
         mediaPlayer.start();
         mediaPlayer.setOnCompletionListener(mp -> {
                     mediaPlayer = null;
+                    currentSong = null;
                     EventBus.getDefault().post(new PlaybackFinishedEvent());
                 }
         );
+        currentSong = song;
         EventBus.getDefault().post(new PlaybackStartedEvent());
     }
 
@@ -65,4 +68,9 @@ public class SongPlayer {
         if (mediaPlayer != null) return mediaPlayer.isPlaying();
         return false;
     }
+
+    public static Song getCurrentSong() {
+        return currentSong;
+    }
+
 }
