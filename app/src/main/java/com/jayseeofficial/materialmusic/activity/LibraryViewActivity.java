@@ -88,11 +88,13 @@ public class LibraryViewActivity extends BaseActivity {
             int id = menuItem.getItemId();
             if (id == R.id.action_songs) {
                 setMode(Mode.SONGS);
-            }
-            if (id == R.id.action_albums) {
+            } else if (id == R.id.action_albums) {
                 setMode(Mode.ALBUMS);
+            } else if (id == R.id.action_artisis) {
+                setMode(Mode.ARTISTS);
             }
-            return false;
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
         setMode(Mode.SONGS);
@@ -165,7 +167,6 @@ public class LibraryViewActivity extends BaseActivity {
                 rvSongList.setAdapter(new ArtistRecyclerAdapter(this));
                 break;
         }
-        drawerLayout.closeDrawer(GravityCompat.START);
     }
 
 }

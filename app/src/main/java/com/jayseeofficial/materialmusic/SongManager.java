@@ -8,8 +8,10 @@ import android.provider.MediaStore;
 import android.util.ArrayMap;
 
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.domain.Artist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumsLoadedEvent;
+import com.jayseeofficial.materialmusic.event.ArtistsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.SongsLoadedEvent;
 
@@ -41,6 +43,7 @@ public class SongManager {
     private Context context;
     private List<Song> songs;
     private Map<String, Album> albums;
+    private Map<String, Artist> artists;
     private boolean isLoaded = false;
 
     private SongManager(Context context) {
@@ -51,6 +54,35 @@ public class SongManager {
     private void loadLibraryInBackground() {
         new Thread(() -> {
             Cursor cursor;
+
+            // Load artists
+            cursor = context.getContentResolver().query(
+                    MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                    new String[]{
+                            MediaStore.Audio.Artists.ARTIST_KEY,
+                            MediaStore.Audio.Artists.ARTIST
+                    },
+                    null,
+                    null,
+                    MediaStore.Audio.Artists.ARTIST
+            );
+
+            int artistNameColumn = cursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST);
+            int artistKeyColumn = cursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST_KEY);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                artists = new ArrayMap<>(cursor.getCount());
+            else
+                artists = new HashMap<>(cursor.getCount());
+
+            while (cursor.moveToNext()) {
+                Artist artist = new Artist();
+                artist.setName(cursor.getString(artistNameColumn));
+                artist.setKey(cursor.getString(artistKeyColumn));
+                artists.put(artist.getName().toLowerCase(), artist);
+            }
+            cursor.close();
+            EventBus.getDefault().post(new ArtistsLoadedEvent());
+
             // Load albums
             cursor = context.getContentResolver().query(
                     MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -80,6 +112,8 @@ public class SongManager {
                 album.setAlbumArtPath(cursor.getString(albumArtColumn));
                 album.setKey(cursor.getString(albumKeyColumn));
                 albums.put(cursor.getString(albumKeyColumn), album);
+                if (artists.get(album.getArtist().toLowerCase()) != null)
+                    artists.get(album.getArtist().toLowerCase()).addAlbum(album);
             }
             cursor.close();
             EventBus.getDefault().post(new AlbumsLoadedEvent());
@@ -115,6 +149,7 @@ public class SongManager {
                     albums.get(song.getAlbumKey()).addSong(song);
                 }
             }
+            cursor.close();
             isLoaded = true;
             EventBus.getDefault().post(new SongsLoadedEvent());
             EventBus.getDefault().post(new LibraryLoadedEvent());
@@ -127,6 +162,10 @@ public class SongManager {
 
     public List<Album> getAlbums() {
         return new ArrayList<>(albums.values());
+    }
+
+    public List<Artist> getArtists() {
+        return new ArrayList<>(artists.values());
     }
 
     public Uri getSongUri(Song song) {
