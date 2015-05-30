@@ -1,5 +1,9 @@
 package com.jayseeofficial.materialmusic;
 
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
+
 import com.jayseeofficial.materialmusic.domain.Song;
 
 /**
@@ -7,7 +11,12 @@ import com.jayseeofficial.materialmusic.domain.Song;
  */
 public class SongPlayer {
 
-    public static void playSong(Song song){
-        // TODO play a song
+    private static MediaPlayer mediaPlayer;
+
+    public static void playSong(Context context, Song song) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) mediaPlayer.stop();
+        Uri playbackUrl = SongManager.getInstance().getSongUri(song);
+        mediaPlayer = MediaPlayer.create(context, playbackUrl);
+        mediaPlayer.start();
     }
 }

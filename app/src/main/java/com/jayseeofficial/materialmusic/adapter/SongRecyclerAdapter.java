@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
+import com.jayseeofficial.materialmusic.SongPlayer;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 
 import de.greenrobot.event.EventBus;
@@ -39,6 +40,9 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.txtTitle.setText(songManager.getSongs().get(i).getTitle());
         viewHolder.txtSubtitle.setText(songManager.getSongs().get(i).getArtist());
+        viewHolder.itemView.setOnClickListener(v -> {
+            SongPlayer.playSong(context,songManager.getSongs().get(i));
+        });
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.jayseeofficial.materialmusic;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.jayseeofficial.materialmusic.domain.Song;
@@ -21,6 +22,12 @@ public class SongManager {
 
     public static SongManager getInstance(Context context) {
         if (instance == null) instance = new SongManager(context.getApplicationContext());
+        return instance;
+    }
+
+    public static SongManager getInstance() {
+        if (instance == null)
+            throw new IllegalStateException("Context not provided! Cannot initialize!");
         return instance;
     }
 
@@ -47,7 +54,6 @@ public class SongManager {
                     null,
                     null
             );
-            
             int titleColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int artistColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int lengthColumn = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
@@ -68,6 +74,10 @@ public class SongManager {
 
     public List<Song> getSongs() {
         return songs;
+    }
+
+    public Uri getSongUri(Song song) {
+        return Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,Integer.toString(song.getId()));
     }
 
     public boolean isLoaded() {
