@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:padding="4dp">
 
-    <ImageView
+    <com.jayseeofficial.materialmusic.view.SquareImageView
         android:id="@+id/img_album_art"
         android:layout_width="@dimen/listitem_height"
         android:layout_height="@dimen/listitem_height"

@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="listitem_height">64dp</dimen>
+
+    <integer name="max_columns">2</integer>
 </resources>

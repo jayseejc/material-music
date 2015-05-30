@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -135,6 +136,7 @@ public class LibraryViewActivity extends BaseActivity {
                     .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
                     .resize(imgNavHeader.getWidth(), imgNavHeader.getHeight())
+                    .centerCrop()
                     .into(imgNavHeader);
         } else {
             imgNavHeader.setImageResource(R.drawable.nav_header_image);
@@ -161,6 +163,7 @@ public class LibraryViewActivity extends BaseActivity {
             case ALBUMS:
                 navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
                 rvSongList.setAdapter(new AlbumRecyclerAdapter(this));
+                rvSongList.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.max_columns)));
                 break;
             case ARTISTS:
                 navigationView.getMenu().findItem(R.id.action_artisis).setChecked(true);
