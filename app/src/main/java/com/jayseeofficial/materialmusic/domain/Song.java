@@ -6,9 +6,9 @@ package com.jayseeofficial.materialmusic.domain;
 public class Song {
     private String title;
     private String artist;
-    private String album;
     private int length;
     private int id;
+    private String albumKey;
 
     public String getTitle() {
         return title;
@@ -26,14 +26,6 @@ public class Song {
         this.artist = artist;
     }
 
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
     public int getLength() {
         return length;
     }
@@ -48,5 +40,13 @@ public class Song {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getAlbumKey() {
+        return albumKey;
+    }
+
+    public void setAlbumKey(String albumKey) {
+        this.albumKey = albumKey;
     }
 }

@@ -21,6 +21,6 @@ public class Application extends android.app.Application {
     }
 
     public void onEvent(Object object) {
-        Log.d("Event!", object.toString());
+        Log.d("Event at "+System.currentTimeMillis()+"!", object.toString());
     }
 }
