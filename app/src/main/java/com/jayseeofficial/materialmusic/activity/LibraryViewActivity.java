@@ -8,8 +8,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -32,6 +30,9 @@ public class LibraryViewActivity extends BaseActivity {
     enum Mode {
         SONGS, ALBUMS, ARTISTS, PLAYLISTS
     }
+
+    private static final String SAVED_MODE = "mode";
+    private static final String SAVED_POSITION = "position";
 
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -98,34 +99,19 @@ public class LibraryViewActivity extends BaseActivity {
             return true;
         });
 
-        setMode(Mode.SONGS);
-
-        rvSongList.setLayoutManager(new LinearLayoutManager(this));
-        rvSongList.setAdapter(new SongRecyclerAdapter(this));
+        if (savedInstanceState != null) {
+            setMode((Mode) savedInstanceState.getSerializable(SAVED_MODE));
+            rvSongList.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SAVED_POSITION));
+        } else setMode(Mode.SONGS);
 
         refreshPlayIcon();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_library_view, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable(SAVED_MODE, mode);
+        savedInstanceState.putParcelable(SAVED_POSITION, rvSongList.getLayoutManager().onSaveInstanceState());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     public void onEventMainThread(PlaybackEvent event) {
@@ -159,6 +145,7 @@ public class LibraryViewActivity extends BaseActivity {
             case SONGS:
                 navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
                 rvSongList.setAdapter(new SongRecyclerAdapter(this));
+                rvSongList.setLayoutManager(new LinearLayoutManager(this));
                 break;
             case ALBUMS:
                 navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
@@ -168,6 +155,7 @@ public class LibraryViewActivity extends BaseActivity {
             case ARTISTS:
                 navigationView.getMenu().findItem(R.id.action_artisis).setChecked(true);
                 rvSongList.setAdapter(new ArtistRecyclerAdapter(this));
+                rvSongList.setLayoutManager(new LinearLayoutManager(this));
                 break;
         }
     }
