@@ -1,6 +1,8 @@
 package com.jayseeofficial.materialmusic;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
 
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
@@ -34,19 +36,30 @@ public class SongManager {
 
     private void loadLibraryInBackground() {
         new Thread(() -> {
-            try {
-                Thread.sleep(15000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            for (int i = 0; i < 100; i++) {
-                for (int j = 0; j < 100; j++) {
-                    Song song = new Song();
-                    song.setTitle("Song " + (j + 1));
-                    song.setLength((j + 1) * 7);
-                    song.setArtist("Artist " + (i + 1));
-                    songs.add(song);
-                }
+            Cursor cursor = context.getContentResolver().query(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    new String[]{
+                            MediaStore.Audio.Media.TITLE,
+                            MediaStore.Audio.Media.ARTIST,
+                            MediaStore.Audio.Media.DURATION,
+                            MediaStore.Audio.Media._ID},
+                    MediaStore.Audio.Media.IS_MUSIC + " = 1",
+                    null,
+                    null
+            );
+            
+            int titleColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int artistColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int lengthColumn = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int idColumn = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
+
+            while (cursor.moveToNext()) {
+                Song song = new Song();
+                song.setTitle(cursor.getString(titleColumn));
+                song.setArtist(cursor.getString(artistColumn));
+                song.setLength(cursor.getInt(lengthColumn));
+                song.setId(cursor.getInt(idColumn));
+                songs.add(song);
             }
             isLoaded = true;
             EventBus.getDefault().post(new LibraryLoadedEvent());
