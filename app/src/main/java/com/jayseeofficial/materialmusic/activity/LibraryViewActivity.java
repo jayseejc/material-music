@@ -55,6 +55,9 @@ public class LibraryViewActivity extends BaseActivity {
 
     @InjectView(R.id.btn_play)
     ImageButton btnPlay;
+    ImageButton navBtnPlay;
+    ImageButton navBtnPrev;
+    ImageButton navBtnNext;
 
     @OnClick(R.id.btn_play)
     public void toggleTrack() {
@@ -69,9 +72,16 @@ public class LibraryViewActivity extends BaseActivity {
         setContentView(R.layout.activity_library_view);
 
         ButterKnife.inject(this);
+        // Butterknife is having trouble finding the media controls in the nav drawer, so we define
+        // their actions here manually.
+        navBtnPlay = (ImageButton) navigationView.findViewById(R.id.btn_play);
+        navBtnNext = (ImageButton) navigationView.findViewById(R.id.btn_next);
+        navBtnPrev = (ImageButton) navigationView.findViewById(R.id.btn_prev);
+        navBtnPlay.setOnClickListener(v -> toggleTrack());
+        navBtnPrev.setOnClickListener(v -> previousTrack());
+        navBtnNext.setOnClickListener(v -> nextTrack());
 
         setSupportActionBar(tbMain);
-
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
             if (id == R.id.action_songs) {
@@ -120,7 +130,7 @@ public class LibraryViewActivity extends BaseActivity {
             Picasso.with(this)
                     .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
-                    .resize(imgNavHeader.getWidth(),imgNavHeader.getHeight())
+                    .resize(imgNavHeader.getWidth(), imgNavHeader.getHeight())
                     .into(imgNavHeader);
         } else {
             imgNavHeader.setImageResource(R.drawable.nav_header_image);
@@ -130,8 +140,10 @@ public class LibraryViewActivity extends BaseActivity {
     private void refreshPlayIcon() {
         if (SongPlayer.isPlaying()) {
             btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
+            navBtnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
         } else {
             btnPlay.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
+            navBtnPlay.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
         }
     }
 
