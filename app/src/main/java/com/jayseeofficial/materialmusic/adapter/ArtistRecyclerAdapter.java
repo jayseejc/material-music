@@ -20,13 +20,13 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by jon on 30/05/15.
  */
-public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapter.ViewHolder> {
+public class ArtistRecyclerAdapter extends RecyclerView.Adapter<ArtistRecyclerAdapter.ViewHolder> {
 
     private Context context;
     private LayoutInflater inflater;
     private SongManager songManager;
 
-    public SongRecyclerAdapter(Context context) {
+    public ArtistRecyclerAdapter(Context context) {
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         songManager = SongManager.getInstance(context);

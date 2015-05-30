@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
+import com.jayseeofficial.materialmusic.adapter.AlbumRecyclerAdapter;
+import com.jayseeofficial.materialmusic.adapter.ArtistRecyclerAdapter;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
@@ -152,11 +154,15 @@ public class LibraryViewActivity extends BaseActivity {
         switch (mode) {
             case SONGS:
                 navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
+                rvSongList.setAdapter(new SongRecyclerAdapter(this));
                 break;
             case ALBUMS:
                 navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
+                rvSongList.setAdapter(new AlbumRecyclerAdapter(this));
                 break;
             case ARTISTS:
+                navigationView.getMenu().findItem(R.id.action_artisis).setChecked(true);
+                rvSongList.setAdapter(new ArtistRecyclerAdapter(this));
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

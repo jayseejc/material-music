@@ -3,6 +3,7 @@ package com.jayseeofficial.materialmusic;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.ArrayMap;
 
@@ -13,7 +14,9 @@ import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.SongsLoadedEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -37,7 +40,7 @@ public class SongManager {
 
     private Context context;
     private List<Song> songs;
-    private ArrayMap<String, Album> albums;
+    private Map<String, Album> albums;
     private boolean isLoaded = false;
 
     private SongManager(Context context) {
@@ -59,14 +62,16 @@ public class SongManager {
                     },
                     null,
                     null,
-                    null
+                    MediaStore.Audio.Albums.ARTIST
             );
             int albumTitleColumn = cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
             int albumArtColumn = cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
             int albumArtistColumn = cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
             int albumKeyColumn = cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_KEY);
-
-            albums = new ArrayMap<>(cursor.getCount());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                albums = new ArrayMap<>(cursor.getCount());
+            else
+                albums = new HashMap<>(cursor.getCount());
 
             while (cursor.moveToNext()) {
                 Album album = new Album();
@@ -89,7 +94,7 @@ public class SongManager {
                             MediaStore.Audio.Media._ID},
                     MediaStore.Audio.Media.IS_MUSIC + " = 1",
                     null,
-                    null
+                    MediaStore.Audio.Media.TITLE
             );
             int songTitleColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtistColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -118,6 +123,10 @@ public class SongManager {
 
     public List<Song> getSongs() {
         return songs;
+    }
+
+    public List<Album> getAlbums() {
+        return new ArrayList<>(albums.values());
     }
 
     public Uri getSongUri(Song song) {
