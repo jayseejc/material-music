@@ -4,20 +4,23 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 
 import com.jayseeofficial.materialmusic.R;
+import com.jayseeofficial.materialmusic.SongPlayer;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
+import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
-public class LibraryViewActivity extends AppCompatActivity {
+public class LibraryViewActivity extends BaseActivity {
 
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -30,6 +33,22 @@ public class LibraryViewActivity extends AppCompatActivity {
 
     @InjectView(R.id.tb_main)
     Toolbar tbMain;
+
+    @OnClick(R.id.btn_next)
+    public void nextTrack(){
+    }
+
+    @OnClick(R.id.btn_prev)
+    public void previousTrack(){
+    }
+
+    @InjectView(R.id.btn_play)
+    ImageButton btnPlay;
+
+    @OnClick(R.id.btn_play)
+    public void toggleTrack(){
+        SongPlayer.toggleSong();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +64,8 @@ public class LibraryViewActivity extends AppCompatActivity {
 
         rvSongList.setLayoutManager(new LinearLayoutManager(this));
         rvSongList.setAdapter(new SongRecyclerAdapter(this));
+
+        refreshPlayIcon();
     }
 
     @Override
@@ -68,4 +89,17 @@ public class LibraryViewActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void onEventMainThread(PlaybackEvent event){
+        refreshPlayIcon();
+    }
+
+    private void refreshPlayIcon(){
+        if(SongPlayer.isPlaying()){
+            btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
+        } else {
+            btnPlay.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
+        }
+    }
+
 }

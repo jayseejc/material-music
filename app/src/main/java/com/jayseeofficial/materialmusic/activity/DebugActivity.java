@@ -11,7 +11,7 @@ import com.jayseeofficial.materialmusic.R;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DebugActivity extends AppCompatActivity {
+public class DebugActivity extends BaseActivity {
 
     @OnClick(R.id.btn_debug_library_view_activity)
     void onLibraryViewActivityClicked() {
