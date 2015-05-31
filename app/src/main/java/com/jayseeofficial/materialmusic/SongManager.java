@@ -125,6 +125,7 @@ public class SongManager {
                             MediaStore.Audio.Media.ARTIST,
                             MediaStore.Audio.Media.DURATION,
                             MediaStore.Audio.Media.ALBUM_KEY,
+                            MediaStore.Audio.Media.TRACK,
                             MediaStore.Audio.Media._ID},
                     MediaStore.Audio.Media.IS_MUSIC + " = 1",
                     null,
@@ -134,6 +135,7 @@ public class SongManager {
             int songArtistColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int songLengthColumn = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             int songAlbumIdColumn = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
+            int songTrackNumberColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TRACK);
             int songIdColumn = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
 
             songs = new ArrayList<Song>(cursor.getCount());
@@ -144,6 +146,7 @@ public class SongManager {
                 song.setLength(cursor.getInt(songLengthColumn));
                 song.setId(cursor.getInt(songIdColumn));
                 song.setAlbumKey(cursor.getString(songAlbumIdColumn));
+                song.setTrackNumber(cursor.getInt(songTrackNumberColumn));
                 songs.add(song);
                 if (albums.get(song.getAlbumKey()) != null) {
                     albums.get(song.getAlbumKey()).addSong(song);

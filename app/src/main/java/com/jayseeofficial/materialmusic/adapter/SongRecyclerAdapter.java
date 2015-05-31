@@ -16,6 +16,7 @@ import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -42,6 +43,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         songs = album.getSongs();
+        Collections.sort(songs, (lhs, rhs) -> lhs.getTrackNumber() - rhs.getTrackNumber());
     }
 
     @Override

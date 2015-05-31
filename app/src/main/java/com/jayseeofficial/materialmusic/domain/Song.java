@@ -10,6 +10,7 @@ public class Song implements Serializable {
     private String artist;
     private int length;
     private int id;
+    private int trackNumber;
     private String albumKey;
 
     public String getTitle() {
@@ -50,5 +51,13 @@ public class Song implements Serializable {
 
     public void setAlbumKey(String albumKey) {
         this.albumKey = albumKey;
+    }
+
+    public int getTrackNumber() {
+        return trackNumber;
+    }
+
+    public void setTrackNumber(int trackNumber) {
+        this.trackNumber = trackNumber;
     }
 }
