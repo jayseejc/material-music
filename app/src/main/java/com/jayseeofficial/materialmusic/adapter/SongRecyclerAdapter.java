@@ -69,6 +69,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
 
     @Override
     public int getItemCount() {
+        if (songs == null) return 0;
         return songs.size();
     }
 
