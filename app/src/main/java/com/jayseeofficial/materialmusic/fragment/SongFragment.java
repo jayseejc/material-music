@@ -10,8 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.view.SquareImageView;
+import com.squareup.picasso.Picasso;
+import com.tumblr.bookends.Bookends;
 
 /**
  * Created by jon on 30/05/15.
@@ -43,13 +47,6 @@ public class SongFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getArguments().getSerializable(ARG_ALBUM) != null) {
-            recyclerView.setAdapter(new SongRecyclerAdapter(getActivity(),
-                    (Album) getArguments().getSerializable(ARG_ALBUM)));
-        } else {
-            recyclerView.setAdapter(new SongRecyclerAdapter(getActivity()));
-        }
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //EventBus.getDefault().register(this);
     }
 
@@ -60,6 +57,25 @@ public class SongFragment extends Fragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         recyclerView.setLayoutParams(params);
+
+        if (getArguments().getSerializable(ARG_ALBUM) != null) {
+            Bookends<SongRecyclerAdapter> bookends =
+                    new Bookends<>(new SongRecyclerAdapter(getActivity(),
+                            (Album) getArguments().getSerializable(ARG_ALBUM)));
+            SquareImageView imageView = new SquareImageView(getActivity());
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            Picasso.with(getActivity())
+                    .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
+                    .error(R.drawable.ic_default_artwork)
+                    .into(imageView);
+            bookends.addHeader(imageView);
+            recyclerView.setAdapter(bookends);
+        } else {
+            recyclerView.setAdapter(new SongRecyclerAdapter(getActivity()));
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return recyclerView;
     }

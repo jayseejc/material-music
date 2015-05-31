@@ -11,6 +11,9 @@ buildscript {
 // Required because retrolambda is on maven central
 repositories {
     mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 apply plugin: 'com.android.application' //or apply plugin: 'java'
@@ -52,4 +55,5 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.greenrobot:java-common:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.tumblr:Bookends:dd5c17ec6a'
 }
