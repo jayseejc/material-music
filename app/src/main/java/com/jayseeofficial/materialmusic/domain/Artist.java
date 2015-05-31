@@ -3,7 +3,9 @@ package com.jayseeofficial.materialmusic.domain;
 import android.os.Build;
 import android.util.ArrayMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +46,10 @@ public class Artist {
 
     public boolean removeAlbum(Album album) {
         return albums.remove(album.getKey()) != null;
+    }
+
+    public List<Album> getAlbums() {
+        return new ArrayList<>(albums.values());
     }
 
 }

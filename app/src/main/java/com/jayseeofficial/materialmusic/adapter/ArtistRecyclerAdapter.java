@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Artist;
+import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -53,6 +54,9 @@ public class ArtistRecyclerAdapter extends RecyclerView.Adapter<ArtistRecyclerAd
         Picasso.with(context)
                 .load(R.drawable.ic_default_artwork)
                 .into(viewHolder.imgAlbumArt);
+        viewHolder.itemView.setOnClickListener(v -> {
+            EventBus.getDefault().post(new ArtistSelectedEvent(artist));
+        });
     }
 
     @Override

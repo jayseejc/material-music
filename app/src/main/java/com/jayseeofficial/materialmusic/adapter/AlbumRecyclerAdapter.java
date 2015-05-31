@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.domain.Artist;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -36,6 +37,13 @@ public class AlbumRecyclerAdapter extends RecyclerView.Adapter<AlbumRecyclerAdap
         else dataSetChanged();
     }
 
+    public AlbumRecyclerAdapter(Context context, Artist artist) {
+        this.context = context.getApplicationContext();
+        this.inflater = LayoutInflater.from(context);
+        songManager = SongManager.getInstance(context);
+        albums = artist.getAlbums();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = inflater.inflate(R.layout.item_big_info, viewGroup, false);
@@ -59,7 +67,7 @@ public class AlbumRecyclerAdapter extends RecyclerView.Adapter<AlbumRecyclerAdap
 
     @Override
     public int getItemCount() {
-        return songManager.getAlbums().size();
+        return albums.size();
     }
 
     private void dataSetChanged() {

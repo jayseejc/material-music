@@ -18,6 +18,7 @@ import com.jayseeofficial.materialmusic.adapter.AlbumRecyclerAdapter;
 import com.jayseeofficial.materialmusic.adapter.ArtistRecyclerAdapter;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Song;
+import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 import com.squareup.picasso.Picasso;
 
@@ -127,6 +128,11 @@ public class LibraryViewActivity extends BaseActivity {
         } else {
             imgNavHeader.setImageResource(R.drawable.nav_header_image);
         }
+    }
+
+    public void onEventMainThread(ArtistSelectedEvent event) {
+        setMode(Mode.ALBUMS);
+        rvSongList.setAdapter(new AlbumRecyclerAdapter(this, event.getArtist()));
     }
 
     private void refreshPlayIcon() {
