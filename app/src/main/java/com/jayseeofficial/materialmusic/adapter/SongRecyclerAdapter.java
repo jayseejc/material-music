@@ -11,9 +11,12 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
+import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -25,12 +28,20 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     private Context context;
     private LayoutInflater inflater;
     private SongManager songManager;
+    private List<Song> songs;
 
     public SongRecyclerAdapter(Context context) {
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         songManager = SongManager.getInstance(context);
         if (!songManager.isLoaded()) EventBus.getDefault().register(this);
+        else dataSetChanged();
+    }
+
+    public SongRecyclerAdapter(Context context, Album album) {
+        this.context = context.getApplicationContext();
+        this.inflater = LayoutInflater.from(context);
+        songs = album.getSongs();
     }
 
     @Override
@@ -41,7 +52,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        final Song song = songManager.getSongs().get(i);
+        final Song song = songs.get(i);
         viewHolder.itemView.setClickable(true);
         viewHolder.txtTitle.setText(song.getTitle());
         viewHolder.txtSubtitle.setText(song.getArtist());
@@ -49,14 +60,19 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
             SongPlayer.playSong(context, song);
         });
         Picasso.with(context)
-                .load("file://" + songManager.getAlbum(song).getAlbumArtPath())
+                .load("file://" + SongManager.getInstance(context).getAlbum(song).getAlbumArtPath())
                 .placeholder(R.drawable.ic_default_artwork)
                 .into(viewHolder.imgAlbumArt);
     }
 
     @Override
     public int getItemCount() {
-        return songManager.getSongs().size();
+        return songs.size();
+    }
+
+    private void dataSetChanged() {
+        if (songManager != null) songs = songManager.getSongs();
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +91,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     }
 
     public void onEventMainThread(LibraryLoadedEvent event) {
-        notifyDataSetChanged();
+        dataSetChanged();
         EventBus.getDefault().unregister(this);
     }
 

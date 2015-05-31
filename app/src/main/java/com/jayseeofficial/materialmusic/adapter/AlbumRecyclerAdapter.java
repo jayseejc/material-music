@@ -12,6 +12,7 @@ import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Artist;
+import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -57,7 +58,7 @@ public class AlbumRecyclerAdapter extends RecyclerView.Adapter<AlbumRecyclerAdap
         viewHolder.txtTitle.setText(album.getTitle());
         viewHolder.txtSubtitle.setText(album.getArtist());
         viewHolder.itemView.setOnClickListener(v -> {
-            // TODO proceed to listing of album tracks
+            EventBus.getDefault().post(new AlbumSelectedEvent(album));
         });
         Picasso.with(context)
                 .load("file://" + album.getAlbumArtPath())

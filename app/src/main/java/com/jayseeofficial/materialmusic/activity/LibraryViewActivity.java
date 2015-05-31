@@ -18,6 +18,7 @@ import com.jayseeofficial.materialmusic.adapter.AlbumRecyclerAdapter;
 import com.jayseeofficial.materialmusic.adapter.ArtistRecyclerAdapter;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Song;
+import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 import com.squareup.picasso.Picasso;
@@ -133,6 +134,11 @@ public class LibraryViewActivity extends BaseActivity {
     public void onEventMainThread(ArtistSelectedEvent event) {
         setMode(Mode.ALBUMS);
         rvSongList.setAdapter(new AlbumRecyclerAdapter(this, event.getArtist()));
+    }
+
+    public void onEventMainThread(AlbumSelectedEvent event) {
+        setMode(Mode.SONGS);
+        rvSongList.setAdapter(new SongRecyclerAdapter(this, event.getAlbum()));
     }
 
     private void refreshPlayIcon() {
