@@ -1,11 +1,15 @@
 package com.jayseeofficial.materialmusic.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -146,6 +150,10 @@ public class LibraryViewActivity extends BaseActivity {
     }
 
     private void setFragment(Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            fragment.setEnterTransition(new Fade());
+            fragment.setExitTransition(new Fade());
+        }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, fragment)
                 .addToBackStack(null)
