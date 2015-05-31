@@ -1,12 +1,13 @@
 package com.jayseeofficial.materialmusic.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by jon on 30/05/15.
  */
-public class Album {
+public class Album implements Serializable{
     private List<Song> songs = new ArrayList<>();
     private String title;
     private String artist;

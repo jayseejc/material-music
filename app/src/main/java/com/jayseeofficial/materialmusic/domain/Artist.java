@@ -3,6 +3,7 @@ package com.jayseeofficial.materialmusic.domain;
 import android.os.Build;
 import android.util.ArrayMap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Created by jon on 30/05/15.
  */
-public class Artist {
+public class Artist implements Serializable {
     private String name;
     private String key;
     private Map<String, Album> albums;

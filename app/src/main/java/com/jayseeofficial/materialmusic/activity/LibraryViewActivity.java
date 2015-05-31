@@ -2,11 +2,9 @@ package com.jayseeofficial.materialmusic.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,13 +13,13 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
-import com.jayseeofficial.materialmusic.adapter.AlbumRecyclerAdapter;
-import com.jayseeofficial.materialmusic.adapter.ArtistRecyclerAdapter;
-import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
+import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
+import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
+import com.jayseeofficial.materialmusic.fragment.SongFragment;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
@@ -42,9 +40,6 @@ public class LibraryViewActivity extends BaseActivity {
 
     @InjectView(R.id.nav_view)
     NavigationView navigationView;
-
-    @InjectView(R.id.rv_song_list)
-    RecyclerView rvSongList;
 
     @InjectView(R.id.tb_main)
     Toolbar tbMain;
@@ -108,7 +103,6 @@ public class LibraryViewActivity extends BaseActivity {
 
         if (savedInstanceState != null) {
             setMode((Mode) savedInstanceState.getSerializable(SAVED_MODE));
-            rvSongList.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SAVED_POSITION));
         } else setMode(Mode.SONGS);
 
         refreshPlayIcon();
@@ -117,7 +111,6 @@ public class LibraryViewActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putSerializable(SAVED_MODE, mode);
-        savedInstanceState.putParcelable(SAVED_POSITION, rvSongList.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -140,14 +133,23 @@ public class LibraryViewActivity extends BaseActivity {
         }
     }
 
-    public void onEventMainThread(ArtistSelectedEvent event) {
-        setMode(Mode.ALBUMS);
-        rvSongList.setAdapter(new AlbumRecyclerAdapter(this, event.getArtist()));
+    public void onEventMainThread(AlbumSelectedEvent event) {
+        this.mode = Mode.SONGS;
+        navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
+        setFragment(SongFragment.createInstance(event.getAlbum()));
     }
 
-    public void onEventMainThread(AlbumSelectedEvent event) {
-        setMode(Mode.SONGS);
-        rvSongList.setAdapter(new SongRecyclerAdapter(this, event.getAlbum()));
+    public void onEventMainThread(ArtistSelectedEvent event) {
+        this.mode = Mode.ALBUMS;
+        navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
+        setFragment(AlbumFragment.createInstance(event.getArtist()));
+    }
+
+    private void setFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void refreshPlayIcon() {
@@ -165,18 +167,15 @@ public class LibraryViewActivity extends BaseActivity {
         switch (mode) {
             case SONGS:
                 navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
-                rvSongList.setAdapter(new SongRecyclerAdapter(this));
-                rvSongList.setLayoutManager(new LinearLayoutManager(this));
+                setFragment(SongFragment.createInstance());
                 break;
             case ALBUMS:
                 navigationView.getMenu().findItem(R.id.action_albums).setChecked(true);
-                rvSongList.setAdapter(new AlbumRecyclerAdapter(this));
-                rvSongList.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.max_columns)));
+                setFragment(AlbumFragment.createInstance());
                 break;
             case ARTISTS:
                 navigationView.getMenu().findItem(R.id.action_artisis).setChecked(true);
-                rvSongList.setAdapter(new ArtistRecyclerAdapter(this));
-                rvSongList.setLayoutManager(new LinearLayoutManager(this));
+                setFragment(ArtistFragment.createInstance());
                 break;
         }
     }

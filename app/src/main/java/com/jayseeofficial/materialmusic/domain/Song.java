@@ -1,9 +1,11 @@
 package com.jayseeofficial.materialmusic.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by jon on 30/05/15.
  */
-public class Song {
+public class Song implements Serializable {
     private String title;
     private String artist;
     private int length;
