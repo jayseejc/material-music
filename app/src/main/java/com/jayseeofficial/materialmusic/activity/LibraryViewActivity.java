@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
@@ -64,6 +65,8 @@ public class LibraryViewActivity extends BaseActivity {
     ImageButton navBtnPlay;
     ImageButton navBtnPrev;
     ImageButton navBtnNext;
+    TextView navTxtTitle;
+    TextView navTxtSubtitle;
 
     @OnClick(R.id.btn_play)
     public void toggleTrack() {
@@ -83,6 +86,8 @@ public class LibraryViewActivity extends BaseActivity {
         navBtnPlay = (ImageButton) navigationView.findViewById(R.id.btn_play);
         navBtnNext = (ImageButton) navigationView.findViewById(R.id.btn_next);
         navBtnPrev = (ImageButton) navigationView.findViewById(R.id.btn_prev);
+        navTxtTitle = (TextView) navigationView.findViewById(R.id.txt_title);
+        navTxtSubtitle = (TextView) navigationView.findViewById(R.id.txt_subtitle);
         navBtnPlay.setOnClickListener(v -> toggleTrack());
         navBtnPrev.setOnClickListener(v -> previousTrack());
         navBtnNext.setOnClickListener(v -> nextTrack());
@@ -120,6 +125,8 @@ public class LibraryViewActivity extends BaseActivity {
         refreshPlayIcon();
         Song currentSong = SongPlayer.getCurrentSong();
         if (currentSong != null) {
+            navTxtTitle.setText(currentSong.getTitle());
+            navTxtSubtitle.setText(currentSong.getArtist());
             Picasso.with(this)
                     .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
@@ -128,6 +135,8 @@ public class LibraryViewActivity extends BaseActivity {
                     .into(imgNavHeader);
         } else {
             imgNavHeader.setImageResource(R.drawable.nav_header_image);
+            navTxtTitle.setText("");
+            navTxtSubtitle.setText("");
         }
     }
 
