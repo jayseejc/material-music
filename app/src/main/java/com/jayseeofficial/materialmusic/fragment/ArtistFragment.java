@@ -36,6 +36,7 @@ public class ArtistFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         recyclerView.setAdapter(new ArtistRecyclerAdapter(getActivity()));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        getActivity().setTitle("Artists");
     }
 
     @Nullable

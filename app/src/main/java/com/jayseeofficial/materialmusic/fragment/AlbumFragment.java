@@ -44,14 +44,18 @@ public class AlbumFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        String title;
         if (getArguments().getSerializable(ARG_ARTIST) != null) {
             recyclerView.setAdapter(new AlbumRecyclerAdapter(getActivity(),
                     (Artist) getArguments().getSerializable(ARG_ARTIST)));
+            title = ((Artist) getArguments().getSerializable(ARG_ARTIST)).getName();
         } else {
             recyclerView.setAdapter(new AlbumRecyclerAdapter(getActivity()));
+            title = "Albums";
         }
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
                 getActivity().getResources().getInteger(R.integer.max_columns)));
+        getActivity().setTitle(title);
     }
 
     @Nullable

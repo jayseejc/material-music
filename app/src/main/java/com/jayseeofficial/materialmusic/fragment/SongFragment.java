@@ -47,7 +47,13 @@ public class SongFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //EventBus.getDefault().register(this);
+        String title;
+        if (getArguments().getSerializable(ARG_ALBUM) != null) {
+            title = ((Album) getArguments().getSerializable(ARG_ALBUM)).getTitle();
+        } else {
+            title = "Songs";
+        }
+        getActivity().setTitle(title);
     }
 
     @Nullable
