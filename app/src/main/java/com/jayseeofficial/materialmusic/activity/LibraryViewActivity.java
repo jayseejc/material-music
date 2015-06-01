@@ -22,6 +22,7 @@ import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
+import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
 import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
 import com.jayseeofficial.materialmusic.fragment.SongFragment;
@@ -64,10 +65,12 @@ public class LibraryViewActivity extends BaseActivity {
 
     @OnClick(R.id.btn_next)
     public void nextTrack() {
+        EventBus.getDefault().post(new SkipEvent(SkipEvent.Direction.NEXT));
     }
 
     @OnClick(R.id.btn_prev)
     public void previousTrack() {
+        EventBus.getDefault().post(new SkipEvent(SkipEvent.Direction.PREVIOUS));
     }
 
     @InjectView(R.id.btn_play)
@@ -125,19 +128,19 @@ public class LibraryViewActivity extends BaseActivity {
         sbPosition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser){
+                if (fromUser) {
                     EventBus.getDefault().post(new SeekEvent(progress));
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                pauseUpdate=true;
+                pauseUpdate = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                pauseUpdate=false;
+                pauseUpdate = false;
             }
         });
 

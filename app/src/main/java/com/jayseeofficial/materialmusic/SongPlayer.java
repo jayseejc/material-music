@@ -10,6 +10,7 @@ import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackStartedEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
+import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 
 import java.util.List;
@@ -80,6 +81,24 @@ public class SongPlayer {
         }
     }
 
+    public void skipNext() {
+        int nextSong = playlist.indexOf(currentSong) + 1;
+        if (nextSong != playlist.size()) {
+            currentSong = playlist.get(nextSong);
+            playSong(context, currentSong);
+        } else {
+            stopSong();
+        }
+    }
+
+    public void skipPrevious() {
+        int nextSong = playlist.indexOf(currentSong) - 1;
+        if (!(nextSong < 0)) {
+            currentSong = playlist.get(nextSong);
+            playSong(context, currentSong);
+        } else stopSong();
+    }
+
     public void toggleSong() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) pauseSong();
@@ -106,15 +125,18 @@ public class SongPlayer {
         // The +1s are to offset base 0 vs base 1
         if (event.getReason() == PlaybackFinishedEvent.Reason.END_OF_TRACK) {
             if (playlist.indexOf(currentSong) + 1 != playlist.size()) {
-                int nextSong = playlist.indexOf(currentSong) + 1;
-                currentSong = playlist.get(nextSong);
-                playSong(context, currentSong);
+                skipNext();
             }
         }
     }
 
     public void onEvent(SeekEvent event) {
         mediaPlayer.seekTo(event.getPosition());
+    }
+
+    public void onEvent(SkipEvent event) {
+        if (event.getDirection() == SkipEvent.Direction.NEXT) skipNext();
+        else if (event.getDirection() == SkipEvent.Direction.PREVIOUS) skipPrevious();
     }
 
     public int getCurrentSongLength() {
