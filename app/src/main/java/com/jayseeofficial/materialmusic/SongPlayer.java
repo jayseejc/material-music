@@ -9,6 +9,7 @@ import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackStartedEvent;
+import com.jayseeofficial.materialmusic.event.SeekEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 
 import java.util.List;
@@ -102,11 +103,24 @@ public class SongPlayer {
     }
 
     public void onEvent(PlaybackFinishedEvent event) {
+        // The +1s are to offset base 0 vs base 1
         if (playlist.indexOf(currentSong) + 1 != playlist.size()) {
             int nextSong = playlist.indexOf(currentSong) + 1;
             currentSong = playlist.get(nextSong);
             playSong(context, currentSong);
         }
+    }
+
+    public void onEvent(SeekEvent event) {
+        mediaPlayer.seekTo(event.getPosition());
+    }
+
+    public int getCurrentSongLength() {
+        return mediaPlayer.getDuration();
+    }
+
+    public int getCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
     }
 
 }

@@ -8,8 +8,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.jayseeofficial.materialmusic.R;
@@ -19,6 +21,7 @@ import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
+import com.jayseeofficial.materialmusic.event.SeekEvent;
 import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
 import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
 import com.jayseeofficial.materialmusic.fragment.SongFragment;
@@ -27,6 +30,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 public class LibraryViewActivity extends BaseActivity {
 
@@ -55,6 +59,9 @@ public class LibraryViewActivity extends BaseActivity {
     @InjectView(R.id.txt_subtitle)
     TextView txtSubTitle;
 
+    @InjectView(R.id.sb_position)
+    SeekBar sbPosition;
+
     @OnClick(R.id.btn_next)
     public void nextTrack() {
     }
@@ -78,6 +85,27 @@ public class LibraryViewActivity extends BaseActivity {
 
     private Mode mode;
 
+    private boolean pauseUpdate = false;
+    private Thread seekBarThread = new Thread(() -> {
+        while (true) {
+            try {
+                if (!pauseUpdate)
+                    sbPosition.setProgress(
+                            SongPlayer.getInstance(LibraryViewActivity.this).getCurrentPosition());
+                runOnUiThread(() -> sbPosition.setVisibility(View.VISIBLE));
+            } catch (NullPointerException ex) {
+                if (!pauseUpdate)
+                    sbPosition.setProgress(0);
+                runOnUiThread(() -> sbPosition.setVisibility(View.INVISIBLE));
+            }
+            try {
+                // Only update 4 times a second.
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+            }
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +122,24 @@ public class LibraryViewActivity extends BaseActivity {
         navBtnPlay.setOnClickListener(v -> toggleTrack());
         navBtnPrev.setOnClickListener(v -> previousTrack());
         navBtnNext.setOnClickListener(v -> nextTrack());
+        sbPosition.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    EventBus.getDefault().post(new SeekEvent(progress));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                pauseUpdate=true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                pauseUpdate=false;
+            }
+        });
 
         setSupportActionBar(tbMain);
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -114,6 +160,7 @@ public class LibraryViewActivity extends BaseActivity {
         } else setMode(Mode.SONGS);
 
         refreshPlayIcon();
+        seekBarThread.start();
     }
 
     @Override
@@ -130,6 +177,7 @@ public class LibraryViewActivity extends BaseActivity {
             txtTitle.setText(currentSong.getTitle());
             navTxtSubtitle.setText(currentSong.getArtist());
             txtSubTitle.setText(currentSong.getArtist());
+            sbPosition.setMax(currentSong.getLength());
             Picasso.with(this)
                     .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
@@ -193,5 +241,4 @@ public class LibraryViewActivity extends BaseActivity {
                 break;
         }
     }
-
 }
