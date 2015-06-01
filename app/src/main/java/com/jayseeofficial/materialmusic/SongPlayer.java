@@ -52,7 +52,7 @@ public class SongPlayer {
         mediaPlayer.start();
         mediaPlayer.setOnCompletionListener(mp -> {
                     mediaPlayer = null;
-                    EventBus.getDefault().post(new PlaybackFinishedEvent());
+                    EventBus.getDefault().post(new PlaybackFinishedEvent(PlaybackFinishedEvent.Reason.END_OF_TRACK));
                 }
         );
         currentSong = song;
@@ -76,7 +76,7 @@ public class SongPlayer {
     public void stopSong() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            EventBus.getDefault().post(new PlaybackFinishedEvent());
+            EventBus.getDefault().post(new PlaybackFinishedEvent(PlaybackFinishedEvent.Reason.UNKNOWN));
         }
     }
 
@@ -104,10 +104,12 @@ public class SongPlayer {
 
     public void onEvent(PlaybackFinishedEvent event) {
         // The +1s are to offset base 0 vs base 1
-        if (playlist.indexOf(currentSong) + 1 != playlist.size()) {
-            int nextSong = playlist.indexOf(currentSong) + 1;
-            currentSong = playlist.get(nextSong);
-            playSong(context, currentSong);
+        if (event.getReason() == PlaybackFinishedEvent.Reason.END_OF_TRACK) {
+            if (playlist.indexOf(currentSong) + 1 != playlist.size()) {
+                int nextSong = playlist.indexOf(currentSong) + 1;
+                currentSong = playlist.get(nextSong);
+                playSong(context, currentSong);
+            }
         }
     }
 

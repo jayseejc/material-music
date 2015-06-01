@@ -9,4 +9,14 @@ public class PlaybackFinishedEvent implements PlaybackEvent {
         USER,
         UNKNOWN
     }
+
+    private Reason reason;
+
+    public PlaybackFinishedEvent(Reason reason) {
+        this.reason = reason;
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
 }
