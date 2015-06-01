@@ -8,8 +8,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,6 +48,12 @@ public class LibraryViewActivity extends BaseActivity {
 
     @InjectView(R.id.img_nav_header)
     ImageView imgNavHeader;
+
+    @InjectView(R.id.txt_title)
+    TextView txtTitle;
+
+    @InjectView(R.id.txt_subtitle)
+    TextView txtSubTitle;
 
     @OnClick(R.id.btn_next)
     public void nextTrack() {
@@ -123,7 +127,9 @@ public class LibraryViewActivity extends BaseActivity {
         Song currentSong = SongPlayer.getCurrentSong();
         if (currentSong != null) {
             navTxtTitle.setText(currentSong.getTitle());
+            txtTitle.setText(currentSong.getTitle());
             navTxtSubtitle.setText(currentSong.getArtist());
+            txtSubTitle.setText(currentSong.getArtist());
             Picasso.with(this)
                     .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
