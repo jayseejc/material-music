@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
-import com.jayseeofficial.materialmusic.SongPlayer;
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
+import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         viewHolder.txtTitle.setText(song.getTitle());
         viewHolder.txtSubtitle.setText(song.getArtist());
         viewHolder.itemView.setOnClickListener(v -> {
-            SongPlayer.playSong(context, song);
+            EventBus.getDefault().post(new SongSelectedEvent(song, songs));
         });
         Picasso.with(context)
                 .load("file://" + SongManager.getInstance(context).getAlbum(song).getAlbumArtPath())

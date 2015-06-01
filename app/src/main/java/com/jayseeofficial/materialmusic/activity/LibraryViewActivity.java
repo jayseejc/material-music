@@ -73,7 +73,7 @@ public class LibraryViewActivity extends BaseActivity {
 
     @OnClick(R.id.btn_play)
     public void toggleTrack() {
-        SongPlayer.toggleSong();
+        SongPlayer.getInstance(this).toggleSong();
     }
 
     private Mode mode;
@@ -124,7 +124,7 @@ public class LibraryViewActivity extends BaseActivity {
 
     public void onEventMainThread(PlaybackEvent event) {
         refreshPlayIcon();
-        Song currentSong = SongPlayer.getCurrentSong();
+        Song currentSong = SongPlayer.getInstance(this).getCurrentSong();
         if (currentSong != null) {
             navTxtTitle.setText(currentSong.getTitle());
             txtTitle.setText(currentSong.getTitle());
@@ -167,7 +167,7 @@ public class LibraryViewActivity extends BaseActivity {
     }
 
     private void refreshPlayIcon() {
-        if (SongPlayer.isPlaying()) {
+        if (SongPlayer.getInstance(this).isPlaying()) {
             btnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
             navBtnPlay.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
         } else {

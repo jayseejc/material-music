@@ -16,11 +16,12 @@ public class Application extends android.app.Application {
         super.onCreate();
 
         songManager = SongManager.getInstance(this);
+        SongPlayer.getInstance(this);
 
         EventBus.getDefault().register(this);
     }
 
     public void onEvent(Object object) {
-        Log.d("Event at "+System.currentTimeMillis()+"!", object.toString());
+        Log.d("Event at " + System.currentTimeMillis() + "!", object.toString());
     }
 }

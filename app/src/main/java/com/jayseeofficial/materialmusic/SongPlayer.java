@@ -9,6 +9,9 @@ import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackStartedEvent;
+import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -17,18 +20,37 @@ import de.greenrobot.event.EventBus;
  */
 public class SongPlayer {
 
-    private static MediaPlayer mediaPlayer;
-    private static Song currentSong = null;
+    private static SongPlayer songPlayer = null;
 
-    public static void playSong(Context context, Song song) {
+    public static SongPlayer getInstance() {
+        if (songPlayer == null)
+            throw new IllegalStateException("Must set context with getInstance(Context) first");
+        return songPlayer;
+    }
+
+    public static SongPlayer getInstance(Context context) {
+        if (songPlayer == null) songPlayer = new SongPlayer(context.getApplicationContext());
+        return songPlayer;
+    }
+
+    private MediaPlayer mediaPlayer;
+    private Song currentSong = null;
+    private List<Song> playlist = null;
+
+    private Context context;
+
+    private SongPlayer(Context context) {
+        this.context = context.getApplicationContext();
+        EventBus.getDefault().register(this);
+    }
+
+    public void playSong(Context context, Song song) {
         stopSong();
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) mediaPlayer.stop();
         Uri playbackUrl = SongManager.getInstance().getSongUri(song);
         mediaPlayer = MediaPlayer.create(context, playbackUrl);
         mediaPlayer.start();
         mediaPlayer.setOnCompletionListener(mp -> {
                     mediaPlayer = null;
-                    currentSong = null;
                     EventBus.getDefault().post(new PlaybackFinishedEvent());
                 }
         );
@@ -36,41 +58,55 @@ public class SongPlayer {
         EventBus.getDefault().post(new PlaybackStartedEvent());
     }
 
-    public static void pauseSong() {
+    public void pauseSong() {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
             EventBus.getDefault().post(new PlaybackPausedEvent());
         }
     }
 
-    public static void resumeSong() {
+    public void resumeSong() {
         if (mediaPlayer != null) {
             mediaPlayer.start();
             EventBus.getDefault().post(new PlaybackResumedEvent());
         }
     }
 
-    public static void stopSong() {
+    public void stopSong() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             EventBus.getDefault().post(new PlaybackFinishedEvent());
         }
     }
 
-    public static void toggleSong() {
+    public void toggleSong() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) pauseSong();
             else resumeSong();
         }
     }
 
-    public static boolean isPlaying() {
+    public boolean isPlaying() {
         if (mediaPlayer != null) return mediaPlayer.isPlaying();
         return false;
     }
 
-    public static Song getCurrentSong() {
+    public Song getCurrentSong() {
         return currentSong;
+    }
+
+    public void onEvent(SongSelectedEvent event) {
+        playlist = event.getSongList();
+        currentSong = event.getSong();
+        playSong(context, currentSong);
+    }
+
+    public void onEvent(PlaybackFinishedEvent event) {
+        if (playlist.indexOf(currentSong) + 1 != playlist.size()) {
+            int nextSong = playlist.indexOf(currentSong) + 1;
+            currentSong = playlist.get(nextSong);
+            playSong(context, currentSong);
+        }
     }
 
 }
