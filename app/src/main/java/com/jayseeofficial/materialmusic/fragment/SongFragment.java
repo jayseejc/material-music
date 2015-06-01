@@ -72,10 +72,16 @@ public class SongFragment extends Fragment {
             imageView.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ));
-            Picasso.with(getActivity())
-                    .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
-                    .error(R.drawable.ic_default_artwork)
-                    .into(imageView);
+            if (((Album) getArguments().getSerializable(ARG_ALBUM)) != null) {
+                Picasso.with(getActivity())
+                        .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
+                        .error(R.drawable.ic_default_artwork)
+                        .into(imageView);
+            } else {
+                Picasso.with(getActivity())
+                        .load(R.drawable.ic_default_artwork)
+                        .into(imageView);
+            }
             bookends.addHeader(imageView);
             recyclerView.setAdapter(bookends);
         } else {

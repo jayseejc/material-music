@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
+import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
@@ -181,9 +182,16 @@ public class LibraryViewActivity extends BaseActivity {
             navTxtSubtitle.setText(currentSong.getArtist());
             txtSubTitle.setText(currentSong.getArtist());
             sbPosition.setMax(currentSong.getLength());
-            Picasso.with(this)
-                    .load("file://" + SongManager.getInstance(this).getAlbum(currentSong).getAlbumArtPath())
+
+            Album album = SongManager.getInstance(this).getAlbum(currentSong);
+            if (album.getAlbumArtPath() != null) Picasso.with(this)
+                    .load("file://" + album.getAlbumArtPath())
                     .error(R.drawable.nav_header_image)
+                    .resize(imgNavHeader.getWidth(), imgNavHeader.getHeight())
+                    .centerCrop()
+                    .into(imgNavHeader);
+            else Picasso.with(this)
+                    .load(R.drawable.nav_header_image)
                     .resize(imgNavHeader.getWidth(), imgNavHeader.getHeight())
                     .centerCrop()
                     .into(imgNavHeader);
