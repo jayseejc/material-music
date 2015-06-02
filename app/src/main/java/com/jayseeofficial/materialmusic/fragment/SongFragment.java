@@ -8,11 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Album;
-import com.jayseeofficial.materialmusic.view.SquareImageView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -23,7 +23,7 @@ public class SongFragment extends Fragment {
     private static final String ARG_ALBUM = "album";
 
     private RecyclerView recyclerView;
-    private SquareImageView imageView = null;
+    private ImageView imageView = null;
 
     public static SongFragment createInstance() {
         SongFragment fragment = new SongFragment();
@@ -69,14 +69,13 @@ public class SongFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_songs);
 
         if (albumMode) {
-            imageView = (SquareImageView) view.findViewById(R.id.img_album_art);
+            imageView = (ImageView) view.findViewById(R.id.img_album_art);
             imageView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                 String path = ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath();
                 if (path != null) {
                     Picasso.with(getActivity())
                             .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
                             .error(R.drawable.ic_default_artwork)
-                            .resize(imageView.getWidth(), imageView.getHeight())
                             .into(imageView);
                 } else {
                     Picasso.with(getActivity())

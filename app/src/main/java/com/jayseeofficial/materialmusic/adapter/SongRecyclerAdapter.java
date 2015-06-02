@@ -70,9 +70,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         viewHolder.itemView.setClickable(true);
         viewHolder.txtTitle.setText(song.getTitle());
         viewHolder.txtSubtitle.setText(song.getArtist());
-        viewHolder.itemView.setOnClickListener(v -> {
-            EventBus.getDefault().post(new SongSelectedEvent(song, songs));
-        });
+        viewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new SongSelectedEvent(song, songs)));
         Picasso.with(context)
                 .load("file://" + SongManager.getInstance(context).getAlbum(song).getAlbumArtPath())
                 .placeholder(R.drawable.ic_default_artwork)

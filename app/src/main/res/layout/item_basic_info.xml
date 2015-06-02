@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/listitem_height"
     android:background="@android:color/white"
@@ -11,6 +12,7 @@
         android:layout_width="@dimen/listitem_height"
         android:layout_height="@dimen/listitem_height"
         android:paddingRight="4dp"
+        android:src="@drawable/ic_default_artwork"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -22,12 +24,16 @@
             android:id="@+id/txt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="This is an example of a very long title for a very long song." />
 
         <TextView
             android:id="@+id/txt_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="This is an example of a ridiculously long artist name for a very long song."/>
     </LinearLayout>
 </LinearLayout>
