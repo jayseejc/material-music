@@ -13,6 +13,7 @@ import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -26,15 +27,24 @@ import de.greenrobot.event.EventBus;
  */
 public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapter.ViewHolder> {
 
+    private enum Mode {
+        FULL_LIST, ALBUM, PLAYLIST
+    }
+
     private Context context;
     private LayoutInflater inflater;
     private SongManager songManager;
     private List<Song> songs;
+    private Album album = null;
+
+    private Mode mode;
 
     public SongRecyclerAdapter(Context context) {
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         songManager = SongManager.getInstance(context);
+        mode = Mode.FULL_LIST;
+        EventBus.getDefault().register(this);
         if (!songManager.isLoaded()) EventBus.getDefault().register(this);
         else dataSetChanged();
     }
@@ -42,7 +52,10 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     public SongRecyclerAdapter(Context context, Album album) {
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
+        mode = Mode.ALBUM;
         songs = album.getSongs();
+        this.album = album;
+        EventBus.getDefault().register(this);
         Collections.sort(songs, (lhs, rhs) -> lhs.getTrackNumber() - rhs.getTrackNumber());
     }
 
@@ -74,7 +87,14 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     }
 
     private void dataSetChanged() {
-        if (songManager != null) songs = songManager.getSongs();
+        switch (mode) {
+            case FULL_LIST:
+                songs = songManager.getSongs();
+                break;
+            case ALBUM:
+                songs = album.getSongs();
+                break;
+        }
         notifyDataSetChanged();
     }
 
@@ -96,6 +116,11 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     public void onEventMainThread(LibraryLoadedEvent event) {
         dataSetChanged();
         EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(PlaylistUpdatedEvent event) {
+        if (mode == Mode.PLAYLIST)
+            dataSetChanged();
     }
 
 }

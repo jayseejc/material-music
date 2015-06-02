@@ -8,6 +8,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,6 +26,7 @@ import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
+import com.jayseeofficial.materialmusic.event.ShuffleEvent;
 import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
 import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
@@ -109,6 +113,28 @@ public class LibraryViewActivity extends BaseActivity {
             }
         }
     });
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_library_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_shuffle:
+                item.setChecked(!item.isChecked());
+                setShuffle(item.isChecked());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setShuffle(boolean shuffle) {
+        EventBus.getDefault().post(new ShuffleEvent(shuffle));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

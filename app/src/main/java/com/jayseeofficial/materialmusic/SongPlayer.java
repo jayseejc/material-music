@@ -9,11 +9,15 @@ import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackStartedEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
+import com.jayseeofficial.materialmusic.event.ShuffleEvent;
 import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import de.greenrobot.event.EventBus;
 
@@ -38,6 +42,8 @@ public class SongPlayer {
     private MediaPlayer mediaPlayer;
     private Song currentSong = null;
     private List<Song> playlist = null;
+    private List<Song> originalPlaylist = null;
+    private boolean shuffleMode = false;
 
     private Context context;
 
@@ -115,10 +121,32 @@ public class SongPlayer {
         return currentSong;
     }
 
-    public void onEvent(SongSelectedEvent event) {
-        playlist = event.getSongList();
+    public List<Song> getCurrentPlaylist() {
+        return playlist;
+    }
+
+    public void setShuffle(boolean shuffleOn) {
+        this.shuffleMode = shuffleOn;
+        if (playlist != null) {
+            if (shuffleOn) {
+                ArrayList<Song> shuffledList = new ArrayList<>(playlist.size());
+                Random random = new Random();
+                shuffledList.add(playlist.remove(playlist.indexOf(currentSong)));
+                while (!playlist.isEmpty()) {
+                    shuffledList.add(playlist.remove(random.nextInt(playlist.size())));
+                }
+                playlist = shuffledList;
+            } else playlist = new ArrayList<>(originalPlaylist);
+        }
+        EventBus.getDefault().post(new PlaylistUpdatedEvent());
+    }
+
+    public void onEventBackgroundThread(SongSelectedEvent event) {
+        playlist = new ArrayList<>(event.getSongList());
+        originalPlaylist = new ArrayList<>(event.getSongList());
         currentSong = event.getSong();
         playSong(context, currentSong);
+        setShuffle(shuffleMode);
     }
 
     public void onEvent(PlaybackFinishedEvent event) {
@@ -137,6 +165,10 @@ public class SongPlayer {
     public void onEvent(SkipEvent event) {
         if (event.getDirection() == SkipEvent.Direction.NEXT) skipNext();
         else if (event.getDirection() == SkipEvent.Direction.PREVIOUS) skipPrevious();
+    }
+
+    public void onEvent(ShuffleEvent event) {
+        setShuffle(event.isShuffleOn());
     }
 
     public int getCurrentSongLength() {
