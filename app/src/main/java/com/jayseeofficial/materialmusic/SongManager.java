@@ -16,6 +16,7 @@ import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.SongsLoadedEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,13 +75,18 @@ public class SongManager {
             else
                 artists = new HashMap<>(cursor.getCount());
 
+            // Temporary list to sort before sticking in the map
+            List<Artist> artistList = new ArrayList<>(cursor.getCount());
             while (cursor.moveToNext()) {
                 Artist artist = new Artist();
                 artist.setName(cursor.getString(artistNameColumn));
                 artist.setKey(cursor.getString(artistKeyColumn));
-                artists.put(artist.getName().toLowerCase(), artist);
+                artistList.add(artist);
             }
             cursor.close();
+
+            for (Artist artist : artistList) artists.put(artist.getName().toLowerCase(), artist);
+
             EventBus.getDefault().post(new ArtistsLoadedEvent());
 
             // Load albums
@@ -105,17 +111,22 @@ public class SongManager {
             else
                 albums = new HashMap<>(cursor.getCount());
 
+            // Temporary collection to sort before putting it in the map.
+            List<Album> albumList = new ArrayList<>(cursor.getCount());
             while (cursor.moveToNext()) {
                 Album album = new Album();
                 album.setTitle(cursor.getString(albumTitleColumn));
                 album.setArtist(cursor.getString(albumArtistColumn));
                 album.setAlbumArtPath(cursor.getString(albumArtColumn));
                 album.setKey(cursor.getString(albumKeyColumn));
-                albums.put(cursor.getString(albumKeyColumn), album);
+                albumList.add(album);
                 if (artists.get(album.getArtist().toLowerCase()) != null)
                     artists.get(album.getArtist().toLowerCase()).addAlbum(album);
             }
             cursor.close();
+
+            for (Album album : albumList) albums.put(album.getKey(), album);
+
             EventBus.getDefault().post(new AlbumsLoadedEvent());
             // Load songs
             cursor = context.getContentResolver().query(
@@ -154,6 +165,11 @@ public class SongManager {
             }
             cursor.close();
             isLoaded = true;
+
+            Collections.sort(songs,
+                    (lhs, rhs) -> lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase())
+            );
+
             EventBus.getDefault().post(new SongsLoadedEvent());
             EventBus.getDefault().post(new LibraryLoadedEvent());
         }).start();
@@ -164,11 +180,30 @@ public class SongManager {
     }
 
     public List<Album> getAlbums() {
-        return new ArrayList<>(albums.values());
+        ArrayList<Album> albumList = new ArrayList<>(albums.values());
+        Collections.sort(albumList,
+                (lhs, rhs) -> {
+                    int res = String.CASE_INSENSITIVE_ORDER.compare(lhs.getTitle(), rhs.getTitle());
+                    if (res == 0)
+                        res = lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
+                    return res;
+                }
+        );
+        return albumList;
     }
 
     public List<Artist> getArtists() {
-        return new ArrayList<>(artists.values());
+        ArrayList<Artist> artistList = new ArrayList<>(artists.values());
+        Collections.sort(artistList,
+                (lhs, rhs) -> {
+                    int res = String.CASE_INSENSITIVE_ORDER.compare(lhs.getName(), rhs.getName());
+                    if (res == 0)
+                        res = lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+                    return res;
+                }
+
+        );
+        return artistList;
     }
 
     public Uri getSongUri(Song song) {
