@@ -45,8 +45,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         songManager = SongManager.getInstance(context);
         mode = Mode.FULL_LIST;
         EventBus.getDefault().register(this);
-        if (!songManager.isLoaded()) EventBus.getDefault().register(this);
-        else dataSetChanged();
+        dataSetChanged();
     }
 
     public SongRecyclerAdapter(Context context, Album album) {

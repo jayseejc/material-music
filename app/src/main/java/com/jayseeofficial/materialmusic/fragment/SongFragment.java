@@ -8,14 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.view.SquareImageView;
 import com.squareup.picasso.Picasso;
-import com.tumblr.bookends.Bookends;
 
 /**
  * Created by jon on 30/05/15.
@@ -25,6 +23,7 @@ public class SongFragment extends Fragment {
     private static final String ARG_ALBUM = "album";
 
     private RecyclerView recyclerView;
+    private SquareImageView imageView = null;
 
     public static SongFragment createInstance() {
         SongFragment fragment = new SongFragment();
@@ -59,36 +58,38 @@ public class SongFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        recyclerView = new RecyclerView(getActivity());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        recyclerView.setLayoutParams(params);
+        boolean albumMode = getArguments().getSerializable(ARG_ALBUM) != null;
+        View view;
+        if (albumMode) {
+            view = inflater.inflate(R.layout.fragment_song_album_mode, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_song, container, false);
+        }
 
-        if (getArguments().getSerializable(ARG_ALBUM) != null) {
-            Bookends<SongRecyclerAdapter> bookends =
-                    new Bookends<>(new SongRecyclerAdapter(getActivity(),
-                            (Album) getArguments().getSerializable(ARG_ALBUM)));
-            SquareImageView imageView = new SquareImageView(getActivity());
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
-            if (((Album) getArguments().getSerializable(ARG_ALBUM)) != null) {
-                Picasso.with(getActivity())
-                        .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
-                        .error(R.drawable.ic_default_artwork)
-                        .into(imageView);
-            } else {
-                Picasso.with(getActivity())
-                        .load(R.drawable.ic_default_artwork)
-                        .into(imageView);
-            }
-            bookends.addHeader(imageView);
-            recyclerView.setAdapter(bookends);
+        recyclerView = (RecyclerView) view.findViewById(R.id.rv_songs);
+
+        if (albumMode) {
+            imageView = (SquareImageView) view.findViewById(R.id.img_album_art);
+            imageView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                String path = ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath();
+                if (path != null) {
+                    Picasso.with(getActivity())
+                            .load("file://" + ((Album) getArguments().getSerializable(ARG_ALBUM)).getAlbumArtPath())
+                            .error(R.drawable.ic_default_artwork)
+                            .resize(imageView.getWidth(), imageView.getHeight())
+                            .into(imageView);
+                } else {
+                    Picasso.with(getActivity())
+                            .load(R.drawable.ic_default_artwork)
+                            .into(imageView);
+                }
+            });
+            recyclerView.setAdapter(new SongRecyclerAdapter(getActivity(), (Album) getArguments().getSerializable(ARG_ALBUM)));
         } else {
             recyclerView.setAdapter(new SongRecyclerAdapter(getActivity()));
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        return recyclerView;
+        return view;
     }
 }
