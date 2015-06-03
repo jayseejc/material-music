@@ -16,11 +16,11 @@ import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import com.jayseeofficial.materialmusic.activity.LibraryViewActivity;
-import com.jayseeofficial.materialmusic.activity.NotificationActivity;
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
+import com.jayseeofficial.materialmusic.receiver.NotificationReceiver;
 
 import de.greenrobot.event.EventBus;
 
@@ -86,20 +86,20 @@ public class NotificationManager {
             remoteViewsSmall.setTextViewText(R.id.txt_artist, currentSong.getArtist());
 
             // Set up buttons
-            Intent intent = new Intent(context, NotificationActivity.class);
+            Intent intent = new Intent(context, NotificationReceiver.class);
 
-            intent.putExtra(NotificationActivity.ACTION_KEY, NotificationActivity.Action.PREV);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.PREV);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_prev, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_prev, pendingIntent);
 
-            intent.putExtra(NotificationActivity.ACTION_KEY, NotificationActivity.Action.TOGGLE);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.TOGGLE);
+            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_play, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_play, pendingIntent);
 
-            intent.putExtra(NotificationActivity.ACTION_KEY, NotificationActivity.Action.NEXT);
-            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.NEXT);
+            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_next, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_next, pendingIntent);
 

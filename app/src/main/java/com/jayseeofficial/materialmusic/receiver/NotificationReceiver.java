@@ -1,6 +1,8 @@
-package com.jayseeofficial.materialmusic.activity;
+package com.jayseeofficial.materialmusic.receiver;
 
-import android.os.Bundle;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 
 import com.jayseeofficial.materialmusic.event.PlaybackToggleEvent;
 import com.jayseeofficial.materialmusic.event.SkipEvent;
@@ -10,7 +12,8 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by jon on 03/06/15.
  */
-public class NotificationActivity extends BaseActivity {
+public class NotificationReceiver extends BroadcastReceiver {
+
     public static final String ACTION_KEY = "action";
 
     public enum Action {
@@ -20,9 +23,8 @@ public class NotificationActivity extends BaseActivity {
     }
 
     @Override
-    public void onCreate(Bundle ignored) {
-        super.onCreate(ignored);
-        Action action = (Action) getIntent().getExtras().get(ACTION_KEY);
+    public void onReceive(Context context, Intent intent) {
+        Action action = (Action) intent.getExtras().get(ACTION_KEY);
         if (action == null)
             throw new IllegalArgumentException("Must provide an Action to perform.");
         switch (action){
@@ -38,6 +40,5 @@ public class NotificationActivity extends BaseActivity {
             default:
                 throw new IllegalArgumentException("Must provide an Action to perform.");
         }
-        finish();
     }
 }
