@@ -17,6 +17,7 @@ public class Application extends android.app.Application {
 
         songManager = SongManager.getInstance(this);
         SongPlayer.getInstance(this);
+        NotificationManager.init(this);
 
         EventBus.getDefault().register(this);
     }

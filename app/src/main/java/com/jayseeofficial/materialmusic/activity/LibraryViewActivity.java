@@ -1,5 +1,6 @@
 package com.jayseeofficial.materialmusic.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.jayseeofficial.materialmusic.BuildConfig;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.SongPlayer;
@@ -123,7 +125,7 @@ public class LibraryViewActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_shuffle:
                 item.setChecked(!item.isChecked());
                 setShuffle(item.isChecked());
@@ -172,6 +174,7 @@ public class LibraryViewActivity extends BaseActivity {
         });
 
         setSupportActionBar(tbMain);
+        if (BuildConfig.DEBUG) navigationView.getMenu().add("Debug");
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id = menuItem.getItemId();
             if (id == R.id.action_songs) {
@@ -180,6 +183,8 @@ public class LibraryViewActivity extends BaseActivity {
                 setMode(Mode.ALBUMS);
             } else if (id == R.id.action_artisis) {
                 setMode(Mode.ARTISTS);
+            } else if (menuItem.getTitle().equals("Debug")) {
+                startActivity(new Intent(this, DebugActivity.class));
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
