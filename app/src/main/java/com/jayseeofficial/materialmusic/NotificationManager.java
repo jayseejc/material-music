@@ -84,22 +84,33 @@ public class NotificationManager {
             remoteViewsSmall.setTextViewText(R.id.txt_title, currentSong.getTitle());
             remoteViewsBig.setTextViewText(R.id.txt_artist, currentSong.getArtist());
             remoteViewsSmall.setTextViewText(R.id.txt_artist, currentSong.getArtist());
+            if (SongPlayer.getInstance(context).isPlaying()) {
+                remoteViewsBig.setImageViewResource(R.id.btn_play, R.drawable.ic_pause_black_48dp);
+                remoteViewsSmall.setImageViewResource(R.id.btn_play, R.drawable.ic_pause_black_48dp);
+            } else {
+                remoteViewsBig.setImageViewResource(R.id.btn_play, R.drawable.ic_play_arrow_black_48dp);
+                remoteViewsSmall.setImageViewResource(R.id.btn_play, R.drawable.ic_play_arrow_black_48dp);
+            }
 
             // Set up buttons
-            Intent intent = new Intent(context, NotificationReceiver.class);
+            Intent intent;
+            PendingIntent pendingIntent;
 
-            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.PREV);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent = new Intent(context, NotificationReceiver.class);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.ACTION_PREV);
+            pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_prev, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_prev, pendingIntent);
 
-            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.TOGGLE);
-            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent = new Intent(context, NotificationReceiver.class);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.ACTION_TOGGLE);
+            pendingIntent = PendingIntent.getBroadcast(context, 2, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_play, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_play, pendingIntent);
 
-            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.Action.NEXT);
-            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            intent = new Intent(context, NotificationReceiver.class);
+            intent.putExtra(NotificationReceiver.ACTION_KEY, NotificationReceiver.ACTION_NEXT);
+            pendingIntent = PendingIntent.getBroadcast(context, 3, intent, PendingIntent.FLAG_ONE_SHOT);
             remoteViewsBig.setOnClickPendingIntent(R.id.btn_next, pendingIntent);
             remoteViewsSmall.setOnClickPendingIntent(R.id.btn_next, pendingIntent);
 

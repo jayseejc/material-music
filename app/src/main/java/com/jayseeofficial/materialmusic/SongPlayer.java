@@ -9,6 +9,7 @@ import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackStartedEvent;
+import com.jayseeofficial.materialmusic.event.PlaybackToggleEvent;
 import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
 import com.jayseeofficial.materialmusic.event.ShuffleEvent;
@@ -165,6 +166,10 @@ public class SongPlayer {
     public void onEvent(SkipEvent event) {
         if (event.getDirection() == SkipEvent.Direction.NEXT) skipNext();
         else if (event.getDirection() == SkipEvent.Direction.PREVIOUS) skipPrevious();
+    }
+
+    public void onEvent(PlaybackToggleEvent event) {
+        toggleSong();
     }
 
     public void onEvent(ShuffleEvent event) {

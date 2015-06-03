@@ -16,25 +16,23 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     public static final String ACTION_KEY = "action";
 
-    public enum Action {
-        NEXT,
-        PREV,
-        TOGGLE
-    }
+    public static final String ACTION_PREV = "prev";
+    public static final String ACTION_TOGGLE = "toggle";
+    public static final String ACTION_NEXT = "next";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Action action = (Action) intent.getExtras().get(ACTION_KEY);
+        String action = (String) intent.getExtras().get(ACTION_KEY);
         if (action == null)
             throw new IllegalArgumentException("Must provide an Action to perform.");
-        switch (action){
-            case NEXT:
+        switch (action) {
+            case ACTION_NEXT:
                 EventBus.getDefault().post(new SkipEvent(SkipEvent.Direction.NEXT));
                 break;
-            case PREV:
+            case ACTION_PREV:
                 EventBus.getDefault().post(new SkipEvent(SkipEvent.Direction.PREVIOUS));
                 break;
-            case TOGGLE:
+            case ACTION_TOGGLE:
                 EventBus.getDefault().post(new PlaybackToggleEvent());
                 break;
             default:
