@@ -1,10 +1,12 @@
 package com.jayseeofficial.materialmusic;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
 import com.jayseeofficial.materialmusic.domain.Song;
+import com.jayseeofficial.materialmusic.event.AudioFocusChangedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackFinishedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackPausedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackResumedEvent;
@@ -49,12 +51,25 @@ public class SongPlayer {
     private List<Song> playlist = null;
     private List<Song> originalPlaylist = null;
     private boolean shuffleMode = false;
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener;
 
     private Context context;
 
     private SongPlayer(Context context) {
         this.context = context.getApplicationContext();
         EventBus.getDefault().register(this);
+        AudioManager manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        onAudioFocusChangeListener =
+                focusChange -> EventBus.getDefault().post(new AudioFocusChangedEvent(focusChange));
+
+        int result = manager.requestAudioFocus(
+                onAudioFocusChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN);
+        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            throw new RuntimeException("Could not obtain audio focus!");
+        }
     }
 
     public void playSong(Context context, Song song) {
@@ -178,6 +193,14 @@ public class SongPlayer {
 
     public void onEvent(ShuffleEvent event) {
         setShuffle(event.isShuffleOn());
+    }
+
+    public void onEvent(AudioFocusChangedEvent event) {
+        if (event.getChangeType() == AudioFocusChangedEvent.FocusEvent.LOSS) {
+            stopSong();
+            AudioManager manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            manager.abandonAudioFocus(onAudioFocusChangeListener);
+        }
     }
 
     public int getCurrentSongLength() {
