@@ -29,14 +29,18 @@ public class SongPlayer {
 
     private static SongPlayer songPlayer = null;
 
+    public static void init(Context context) {
+        songPlayer = new SongPlayer(context.getApplicationContext());
+    }
+
     public static SongPlayer getInstance() {
         if (songPlayer == null)
-            throw new IllegalStateException("Must set context with getInstance(Context) first");
+            throw new IllegalStateException("SongPlayer not initialized!");
         return songPlayer;
     }
 
     public static SongPlayer getInstance(Context context) {
-        if (songPlayer == null) songPlayer = new SongPlayer(context.getApplicationContext());
+        if (songPlayer == null) init(context);
         return songPlayer;
     }
 

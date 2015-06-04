@@ -30,14 +30,18 @@ public class SongManager {
 
     static SongManager instance;
 
+    public static void init(Context context) {
+        instance = new SongManager(context.getApplicationContext());
+    }
+
     public static SongManager getInstance(Context context) {
-        if (instance == null) instance = new SongManager(context.getApplicationContext());
+        if (instance == null) init(context);
         return instance;
     }
 
     public static SongManager getInstance() {
         if (instance == null)
-            throw new IllegalStateException("Context not provided! Cannot initialize!");
+            throw new IllegalStateException("SongManager not initialized!");
         return instance;
     }
 

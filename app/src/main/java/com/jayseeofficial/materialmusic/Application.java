@@ -9,14 +9,12 @@ import de.greenrobot.event.EventBus;
  */
 public class Application extends android.app.Application {
 
-    private SongManager songManager;
-
     @Override
     public void onCreate() {
         super.onCreate();
 
-        songManager = SongManager.getInstance(this);
-        SongPlayer.getInstance(this);
+        SongManager.init(this);
+        SongPlayer.init(this);
         NotificationManager.init(this);
 
         EventBus.getDefault().register(this);
