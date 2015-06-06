@@ -102,11 +102,13 @@ public class LibraryViewActivity extends BaseActivity {
                 if (!pauseUpdate)
                     sbPosition.setProgress(
                             SongPlayer.getInstance(LibraryViewActivity.this).getCurrentPosition());
-                runOnUiThread(() -> sbPosition.setVisibility(View.VISIBLE));
+                if (sbPosition.getVisibility() != View.VISIBLE)
+                    runOnUiThread(() -> sbPosition.setVisibility(View.VISIBLE));
             } catch (NullPointerException ex) {
                 if (!pauseUpdate)
                     sbPosition.setProgress(0);
-                runOnUiThread(() -> sbPosition.setVisibility(View.INVISIBLE));
+                if (sbPosition.getVisibility() != View.INVISIBLE)
+                    runOnUiThread(() -> sbPosition.setVisibility(View.INVISIBLE));
             }
             try {
                 // Only update 4 times a second.
