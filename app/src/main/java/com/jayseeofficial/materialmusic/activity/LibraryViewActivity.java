@@ -7,8 +7,10 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -88,6 +90,8 @@ public class LibraryViewActivity extends BaseActivity {
     TextView navTxtTitle;
     TextView navTxtSubtitle;
 
+    ActionBarDrawerToggle toggle;
+
     @OnClick(R.id.btn_play)
     public void toggleTrack() {
         SongPlayer.getInstance(this).toggleSong();
@@ -132,6 +136,9 @@ public class LibraryViewActivity extends BaseActivity {
                 item.setChecked(!item.isChecked());
                 setShuffle(item.isChecked());
                 return true;
+        }
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -192,12 +199,46 @@ public class LibraryViewActivity extends BaseActivity {
             return true;
         });
 
+        toggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+
+        toggle.setToolbarNavigationClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(Gravity.LEFT))
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            else
+                drawerLayout.openDrawer(Gravity.LEFT);
+        });
+        toggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(toggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         if (savedInstanceState != null) {
             setMode((Mode) savedInstanceState.getSerializable(SAVED_MODE));
         } else setMode(Mode.SONGS);
 
         refreshPlayIcon();
         seekBarThread.start();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        toggle.syncState();
     }
 
     @Override
