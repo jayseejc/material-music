@@ -9,6 +9,7 @@ import android.util.ArrayMap;
 
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Artist;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistsLoadedEvent;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,6 +51,7 @@ public class SongManager {
     private List<Song> songs;
     private Map<String, Album> albums;
     private Map<String, Artist> artists;
+    private List<Playlist> playlists;
     private boolean isLoaded = false;
 
     private SongManager(Context context) {
@@ -174,6 +177,19 @@ public class SongManager {
                     (lhs, rhs) -> lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase())
             );
 
+            // Playlists are a little different, as they're an internal thing
+            playlists = Application.getPlaylistManager().loadPlaylists();
+            Random random = new Random();
+            for (int i = 0; i < 50; i++) {
+                Playlist playlist = new Playlist();
+                playlist.setTitle("Playlist " + i);
+                for (int j = 0; j < 20; j++) {
+                    playlist.addSong(songs.get(random.nextInt(songs.size())));
+                }
+                playlists.add(playlist);
+            }
+            Application.getPlaylistManager().savePlaylists(playlists);
+
             EventBus.getDefault().post(new SongsLoadedEvent());
             EventBus.getDefault().post(new LibraryLoadedEvent());
         }).start();
@@ -220,5 +236,9 @@ public class SongManager {
 
     public Album getAlbum(Song song) {
         return albums.get(song.getAlbumKey());
+    }
+
+    public List<Playlist> getPlaylists() {
+        return playlists;
     }
 }

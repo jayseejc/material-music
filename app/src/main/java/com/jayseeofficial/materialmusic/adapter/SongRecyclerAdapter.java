@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
@@ -36,6 +37,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     private SongManager songManager;
     private List<Song> songs;
     private Album album = null;
+    private Playlist playlist = null;
 
     private Mode mode;
 
@@ -56,6 +58,15 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         this.album = album;
         EventBus.getDefault().register(this);
         Collections.sort(songs, (lhs, rhs) -> lhs.getTrackNumber() - rhs.getTrackNumber());
+    }
+
+    public SongRecyclerAdapter(Context context, Playlist playlist) {
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
+        this.playlist = playlist;
+        mode = Mode.PLAYLIST;
+        songs = playlist.getSongs();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -90,6 +101,9 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
                 break;
             case ALBUM:
                 songs = album.getSongs();
+                break;
+            case PLAYLIST:
+                // Shouldn't actually ever change while we're viewing it...
                 break;
         }
         notifyDataSetChanged();

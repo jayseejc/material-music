@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.adapter.SongRecyclerAdapter;
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -21,6 +22,7 @@ import com.squareup.picasso.Picasso;
 public class SongFragment extends Fragment {
 
     private static final String ARG_ALBUM = "album";
+    private static final String ARG_PLAYLIST = "playlist";
 
     private RecyclerView recyclerView;
     private ImageView imageView = null;
@@ -36,6 +38,14 @@ public class SongFragment extends Fragment {
         SongFragment fragment = new SongFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(ARG_ALBUM, album);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    public static SongFragment createInstance(Playlist playlist) {
+        SongFragment fragment = new SongFragment();
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(ARG_PLAYLIST, playlist);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -59,6 +69,7 @@ public class SongFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         boolean albumMode = getArguments().getSerializable(ARG_ALBUM) != null;
+        boolean playlistMode = getArguments().getSerializable(ARG_PLAYLIST) != null;
         View view;
         if (albumMode) {
             view = inflater.inflate(R.layout.fragment_song_album_mode, container, false);
@@ -84,6 +95,8 @@ public class SongFragment extends Fragment {
                 }
             });
             recyclerView.setAdapter(new SongRecyclerAdapter(getActivity(), (Album) getArguments().getSerializable(ARG_ALBUM)));
+        } else if (playlistMode) {
+            recyclerView.setAdapter(new SongRecyclerAdapter(getActivity(), (Playlist) getArguments().getSerializable(ARG_PLAYLIST)));
         } else {
             recyclerView.setAdapter(new SongRecyclerAdapter(getActivity()));
         }
