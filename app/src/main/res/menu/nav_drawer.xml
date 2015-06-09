@@ -9,5 +9,7 @@
             android:title="Albums" />
         <item android:id="@+id/action_artisis"
             android:title="Artists" />
+        <item android:id="@+id/action_playlists"
+            android:title="Playlists" />
     </group>
 </menu>

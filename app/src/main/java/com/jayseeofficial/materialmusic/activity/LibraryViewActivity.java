@@ -29,11 +29,13 @@ import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumSelectedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.PlaybackEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistSelectedEvent;
 import com.jayseeofficial.materialmusic.event.SeekEvent;
 import com.jayseeofficial.materialmusic.event.ShuffleEvent;
 import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
 import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
+import com.jayseeofficial.materialmusic.fragment.PlaylistFragment;
 import com.jayseeofficial.materialmusic.fragment.SongFragment;
 import com.squareup.picasso.Picasso;
 
@@ -192,6 +194,8 @@ public class LibraryViewActivity extends BaseActivity {
                 setMode(Mode.ALBUMS);
             } else if (id == R.id.action_artisis) {
                 setMode(Mode.ARTISTS);
+            } else if (id == R.id.action_playlists) {
+                setMode(Mode.PLAYLISTS);
             } else if (menuItem.getTitle().equals("Debug")) {
                 startActivity(new Intent(this, DebugActivity.class));
             }
@@ -288,6 +292,12 @@ public class LibraryViewActivity extends BaseActivity {
         setFragment(AlbumFragment.createInstance(event.getArtist()));
     }
 
+    public void onEventMainThread(PlaylistSelectedEvent event) {
+        this.mode = Mode.SONGS;
+        navigationView.getMenu().findItem(R.id.action_songs).setChecked(true);
+        setFragment(SongFragment.createInstance(event.getPlaylist()));
+    }
+
     private void setFragment(Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             fragment.setEnterTransition(new Fade());
@@ -324,6 +334,9 @@ public class LibraryViewActivity extends BaseActivity {
                 navigationView.getMenu().findItem(R.id.action_artisis).setChecked(true);
                 setFragment(ArtistFragment.createInstance());
                 break;
+            case PLAYLISTS:
+                navigationView.getMenu().findItem(R.id.action_playlists).setChecked(true);
+                setFragment(PlaylistFragment.createInstance());
         }
     }
 }
