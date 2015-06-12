@@ -3,6 +3,8 @@ package com.jayseeofficial.materialmusic;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.jayseeofficial.materialmusic.domain.Playlist;
 
 import java.io.File;
@@ -19,6 +21,8 @@ import java.util.List;
 public class FilePlaylistManager implements PlaylistManager {
     private static FilePlaylistManager instance;
 
+    InstanceCreator<Playlist> playlistInstanceCreator = type -> new Playlist();
+
     public static PlaylistManager getInstance(Context context) {
         if (instance == null) instance = new FilePlaylistManager(context);
         return instance;
@@ -29,7 +33,7 @@ public class FilePlaylistManager implements PlaylistManager {
 
     private FilePlaylistManager(Context context) {
         this.context = context.getApplicationContext();
-        gson = new Gson();
+        gson = new GsonBuilder().registerTypeAdapter(Playlist.class, playlistInstanceCreator).create();
     }
 
     @Override

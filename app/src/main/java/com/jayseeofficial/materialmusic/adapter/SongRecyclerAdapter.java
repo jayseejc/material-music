@@ -15,6 +15,7 @@ import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
+import com.jayseeofficial.materialmusic.event.SongLongClickedEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -82,6 +83,10 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         viewHolder.txtTitle.setText(song.getTitle());
         viewHolder.txtSubtitle.setText(song.getArtist());
         viewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new SongSelectedEvent(song, songs)));
+        viewHolder.itemView.setOnLongClickListener(v -> {
+            EventBus.getDefault().post(new SongLongClickedEvent(song));
+            return true;
+        });
         Picasso.with(context)
                 .load("file://" + SongManager.getInstance(context).getAlbum(song).getAlbumArtPath())
                 .placeholder(R.drawable.ic_default_artwork)
