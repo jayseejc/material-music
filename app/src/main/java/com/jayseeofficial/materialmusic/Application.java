@@ -23,12 +23,12 @@ public class Application extends android.app.Application {
         playlistManager = FilePlaylistManager.getInstance(this);
     }
 
-    public void onEvent(Object object) {
-        Log.d("Event at " + System.currentTimeMillis() + "!", object.toString());
-    }
-
     public static PlaylistManager getPlaylistManager() {
         return playlistManager;
+    }
+
+    public void onEvent(Object object) {
+        Log.d("Event at " + System.currentTimeMillis() + "!", object.toString());
     }
 
 }

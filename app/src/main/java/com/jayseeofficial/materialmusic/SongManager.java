@@ -14,6 +14,8 @@ import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistCreatedEvent;
+import com.jayseeofficial.materialmusic.event.SongAddedToPlaylistEvent;
 import com.jayseeofficial.materialmusic.event.SongsLoadedEvent;
 
 import java.util.ArrayList;
@@ -21,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import de.greenrobot.event.EventBus;
 
@@ -57,6 +58,7 @@ public class SongManager {
     private SongManager(Context context) {
         this.context = context;
         loadLibraryInBackground();
+        EventBus.getDefault().register(this);
     }
 
     private void loadLibraryInBackground() {
@@ -171,7 +173,7 @@ public class SongManager {
                 }
             }
             cursor.close();
-            isLoaded = true;
+            EventBus.getDefault().post(new SongsLoadedEvent());
 
             Collections.sort(songs,
                     (lhs, rhs) -> lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase())
@@ -179,18 +181,8 @@ public class SongManager {
 
             // Playlists are a little different, as they're an internal thing
             playlists = Application.getPlaylistManager().loadPlaylists();
-            Random random = new Random();
-            for (int i = 0; i < 50; i++) {
-                Playlist playlist = new Playlist();
-                playlist.setTitle("Playlist " + i);
-                for (int j = 0; j < 20; j++) {
-                    playlist.addSong(songs.get(random.nextInt(songs.size())));
-                }
-                playlists.add(playlist);
-            }
-            Application.getPlaylistManager().savePlaylists(playlists);
 
-            EventBus.getDefault().post(new SongsLoadedEvent());
+            isLoaded = true;
             EventBus.getDefault().post(new LibraryLoadedEvent());
         }).start();
     }
@@ -226,6 +218,13 @@ public class SongManager {
         return artistList;
     }
 
+    public Playlist getPlaylistById(int id) {
+        for (Playlist playlist : playlists) {
+            if (playlist.getId() == id) return playlist;
+        }
+        return null;
+    }
+
     public Uri getSongUri(Song song) {
         return Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.toString(song.getId()));
     }
@@ -241,4 +240,22 @@ public class SongManager {
     public List<Playlist> getPlaylists() {
         return playlists;
     }
+
+    public void addPlaylist(Playlist playlist) {
+        playlists.add(playlist);
+        savePlaylists();
+    }
+
+    private void savePlaylists() {
+        Application.getPlaylistManager().savePlaylists(playlists);
+    }
+
+    public void onEventAsync(PlaylistCreatedEvent event) {
+        addPlaylist(event.getPlaylist());
+    }
+
+    public void onEventAsync(SongAddedToPlaylistEvent event) {
+        getPlaylistById(event.getPlaylist().getId()).addSong(event.getSong());
+    }
+
 }

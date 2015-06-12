@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -300,13 +301,15 @@ public class LibraryViewActivity extends BaseActivity {
 
     private void setFragment(Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            fragment.setEnterTransition(new Fade());
-            fragment.setExitTransition(new Fade());
+            if (getSupportFragmentManager().getBackStackEntryCount() != 0) {
+                fragment.setEnterTransition(new Fade());
+                fragment.setExitTransition(new Fade());
+            }
         }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_content, fragment)
-                .addToBackStack(null)
-                .commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_content, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void refreshPlayIcon() {
