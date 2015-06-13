@@ -61,4 +61,5 @@ dependencies {
     compile 'com.github.tumblr:Bookends:v1.0'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile 'com.google.code.gson:gson:2.3'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
 }
