@@ -7,7 +7,11 @@
         <item
             android:id="@+id/action_albums"
             android:title="Albums" />
-        <item android:id="@+id/action_artisis"
+        <item
+            android:id="@+id/action_artisis"
             android:title="Artists" />
     </group>
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings" />
 </menu>

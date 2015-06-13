@@ -44,6 +44,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:cardview-v7:22.2.0'
@@ -56,4 +57,5 @@ dependencies {
     compile 'de.greenrobot:java-common:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.tumblr:Bookends:dd5c17ec6a'
+    compile 'com.github.jayseejc:colorpicker:8a15d632a0'
 }
