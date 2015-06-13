@@ -192,6 +192,8 @@ public class LibraryViewActivity extends BaseActivity {
                 setMode(Mode.ALBUMS);
             } else if (id == R.id.action_artisis) {
                 setMode(Mode.ARTISTS);
+            } else if (id == R.id.action_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
             } else if (menuItem.getTitle().equals("Debug")) {
                 startActivity(new Intent(this, DebugActivity.class));
             }
