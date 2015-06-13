@@ -36,8 +36,10 @@ import com.jayseeofficial.materialmusic.event.ShuffleEvent;
 import com.jayseeofficial.materialmusic.event.SkipEvent;
 import com.jayseeofficial.materialmusic.fragment.AlbumFragment;
 import com.jayseeofficial.materialmusic.fragment.ArtistFragment;
+import com.jayseeofficial.materialmusic.fragment.FullViewFragment;
 import com.jayseeofficial.materialmusic.fragment.PlaylistFragment;
 import com.jayseeofficial.materialmusic.fragment.SongFragment;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
@@ -60,8 +62,17 @@ public class LibraryViewActivity extends BaseActivity {
     @InjectView(R.id.nav_view)
     NavigationView navigationView;
 
+    @InjectView(R.id.sliding_panel)
+    SlidingUpPanelLayout slidingPanel;
+
     @InjectView(R.id.tb_main)
     Toolbar tbMain;
+
+    @InjectView(R.id.tb_controls)
+    Toolbar tbControls;
+
+    @InjectView(R.id.tb_main_full)
+    Toolbar tbMainFull;
 
     @InjectView(R.id.img_nav_header)
     ImageView imgNavHeader;
@@ -233,9 +244,29 @@ public class LibraryViewActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_full_view, new FullViewFragment())
+                .commit();
+
         if (savedInstanceState != null) {
             setMode((Mode) savedInstanceState.getSerializable(SAVED_MODE));
         } else setMode(Mode.SONGS);
+
+        slidingPanel.setPanelSlideListener(new SlidingUpPanelLayout.SimplePanelSlideListener() {
+            @Override
+            public void onPanelExpanded(View panel) {
+                tbControls.setVisibility(View.INVISIBLE);
+                tbMainFull.setVisibility(View.VISIBLE);
+                setSupportActionBar(tbMainFull);
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                tbControls.setVisibility(View.VISIBLE);
+                tbMainFull.setVisibility(View.INVISIBLE);
+                setSupportActionBar(tbMain);
+            }
+        });
 
         refreshPlayIcon();
         seekBarThread.start();

@@ -1,11 +1,13 @@
 package com.jayseeofficial.materialmusic.event;
 
+import com.jayseeofficial.materialmusic.domain.Song;
+
 /**
  * Created by jon on 30/05/15.
  */
-public class PlaybackFinishedEvent implements PlaybackEvent {
+public class PlaybackFinishedEvent extends PlaybackEvent {
 
-    public static final String EVENT_TYPE="finished";
+    public static final String EVENT_TYPE = "finished";
 
     @Override
     public String getEventType() {
@@ -20,7 +22,8 @@ public class PlaybackFinishedEvent implements PlaybackEvent {
 
     private Reason reason;
 
-    public PlaybackFinishedEvent(Reason reason) {
+    public PlaybackFinishedEvent(Song song, Reason reason) {
+        super(song);
         this.reason = reason;
     }
 

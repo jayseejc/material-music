@@ -79,31 +79,31 @@ public class SongPlayer {
         mediaPlayer.start();
         mediaPlayer.setOnCompletionListener(mp -> {
                     mediaPlayer = null;
-                    EventBus.getDefault().post(new PlaybackFinishedEvent(PlaybackFinishedEvent.Reason.END_OF_TRACK));
+                    EventBus.getDefault().post(new PlaybackFinishedEvent(song, PlaybackFinishedEvent.Reason.END_OF_TRACK));
                 }
         );
         currentSong = song;
-        EventBus.getDefault().post(new PlaybackStartedEvent());
+        EventBus.getDefault().post(new PlaybackStartedEvent(song));
     }
 
     public void pauseSong() {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
-            EventBus.getDefault().post(new PlaybackPausedEvent());
+            EventBus.getDefault().post(new PlaybackPausedEvent(getCurrentSong()));
         }
     }
 
     public void resumeSong() {
         if (mediaPlayer != null) {
             mediaPlayer.start();
-            EventBus.getDefault().post(new PlaybackResumedEvent());
+            EventBus.getDefault().post(new PlaybackResumedEvent(getCurrentSong()));
         }
     }
 
     public void stopSong() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            EventBus.getDefault().post(new PlaybackFinishedEvent(PlaybackFinishedEvent.Reason.UNKNOWN));
+            EventBus.getDefault().post(new PlaybackFinishedEvent(getCurrentSong(), PlaybackFinishedEvent.Reason.UNKNOWN));
         }
     }
 
