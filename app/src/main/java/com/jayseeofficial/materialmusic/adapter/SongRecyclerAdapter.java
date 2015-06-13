@@ -11,9 +11,11 @@ import android.widget.TextView;
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
 import com.jayseeofficial.materialmusic.domain.Album;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
 import com.jayseeofficial.materialmusic.event.PlaylistUpdatedEvent;
+import com.jayseeofficial.materialmusic.event.SongLongClickedEvent;
 import com.jayseeofficial.materialmusic.event.SongSelectedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -36,6 +38,7 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
     private SongManager songManager;
     private List<Song> songs;
     private Album album = null;
+    private Playlist playlist = null;
 
     private Mode mode;
 
@@ -58,6 +61,15 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         Collections.sort(songs, (lhs, rhs) -> lhs.getTrackNumber() - rhs.getTrackNumber());
     }
 
+    public SongRecyclerAdapter(Context context, Playlist playlist) {
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
+        this.playlist = playlist;
+        mode = Mode.PLAYLIST;
+        songs = playlist.getSongs();
+        EventBus.getDefault().register(this);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = inflater.inflate(R.layout.item_basic_info, viewGroup, false);
@@ -71,6 +83,10 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
         viewHolder.txtTitle.setText(song.getTitle());
         viewHolder.txtSubtitle.setText(song.getArtist());
         viewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new SongSelectedEvent(song, songs)));
+        viewHolder.itemView.setOnLongClickListener(v -> {
+            EventBus.getDefault().post(new SongLongClickedEvent(song));
+            return true;
+        });
         Picasso.with(context)
                 .load("file://" + SongManager.getInstance(context).getAlbum(song).getAlbumArtPath())
                 .placeholder(R.drawable.ic_default_artwork)
@@ -90,6 +106,9 @@ public class SongRecyclerAdapter extends RecyclerView.Adapter<SongRecyclerAdapte
                 break;
             case ALBUM:
                 songs = album.getSongs();
+                break;
+            case PLAYLIST:
+                // Shouldn't actually ever change while we're viewing it...
                 break;
         }
         notifyDataSetChanged();

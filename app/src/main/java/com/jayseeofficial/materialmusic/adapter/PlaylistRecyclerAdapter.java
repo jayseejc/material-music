@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.jayseeofficial.materialmusic.R;
 import com.jayseeofficial.materialmusic.SongManager;
-import com.jayseeofficial.materialmusic.domain.Artist;
-import com.jayseeofficial.materialmusic.event.ArtistSelectedEvent;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistSelectedEvent;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -22,14 +22,14 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by jon on 30/05/15.
  */
-public class ArtistRecyclerAdapter extends RecyclerView.Adapter<ArtistRecyclerAdapter.ViewHolder> {
+public class PlaylistRecyclerAdapter extends RecyclerView.Adapter<PlaylistRecyclerAdapter.ViewHolder> {
 
     private Context context;
     private LayoutInflater inflater;
     private SongManager songManager;
-    private List<Artist> artists;
+    private List<Playlist> playlists;
 
-    public ArtistRecyclerAdapter(Context context) {
+    public PlaylistRecyclerAdapter(Context context) {
         this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         songManager = SongManager.getInstance(context);
@@ -45,24 +45,24 @@ public class ArtistRecyclerAdapter extends RecyclerView.Adapter<ArtistRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        final Artist artist = artists.get(i);
+        final Playlist playlist = playlists.get(i);
         viewHolder.itemView.setClickable(true);
-        viewHolder.txtTitle.setText(artist.getName());
+        viewHolder.txtTitle.setText(playlist.getTitle());
         Picasso.with(context)
                 .load(R.drawable.ic_default_artwork)
                 .into(viewHolder.imgAlbumArt);
         viewHolder.itemView.setOnClickListener(v -> {
-            EventBus.getDefault().post(new ArtistSelectedEvent(artist));
+            EventBus.getDefault().post(new PlaylistSelectedEvent(playlist));
         });
     }
 
     @Override
     public int getItemCount() {
-        return artists.size();
+        return playlists.size();
     }
 
     private void dataSetChanged() {
-        artists = SongManager.getInstance(context).getArtists();
+        playlists = SongManager.getInstance(context).getPlaylists();
         notifyDataSetChanged();
     }
 

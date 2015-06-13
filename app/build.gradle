@@ -58,4 +58,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.tumblr:Bookends:dd5c17ec6a'
     compile 'com.github.jayseejc:colorpicker:8a15d632a0'
+    compile 'com.github.tumblr:Bookends:v1.0'
+    compile 'org.apache.commons:commons-collections4:4.0'
+    compile 'com.google.code.gson:gson:1.7.2'
 }

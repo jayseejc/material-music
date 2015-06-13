@@ -9,18 +9,26 @@ import de.greenrobot.event.EventBus;
  */
 public class Application extends android.app.Application {
 
+    private static PlaylistManager playlistManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        EventBus.getDefault().register(this);
+
         SongManager.init(this);
         SongPlayer.init(this);
         NotificationManager.init(this);
+        playlistManager = FilePlaylistManager.getInstance(this);
+    }
 
-        EventBus.getDefault().register(this);
+    public static PlaylistManager getPlaylistManager() {
+        return playlistManager;
     }
 
     public void onEvent(Object object) {
         Log.d("Event at " + System.currentTimeMillis() + "!", object.toString());
     }
+
 }

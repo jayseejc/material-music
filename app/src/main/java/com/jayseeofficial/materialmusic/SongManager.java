@@ -9,10 +9,13 @@ import android.util.ArrayMap;
 
 import com.jayseeofficial.materialmusic.domain.Album;
 import com.jayseeofficial.materialmusic.domain.Artist;
+import com.jayseeofficial.materialmusic.domain.Playlist;
 import com.jayseeofficial.materialmusic.domain.Song;
 import com.jayseeofficial.materialmusic.event.AlbumsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.ArtistsLoadedEvent;
 import com.jayseeofficial.materialmusic.event.LibraryLoadedEvent;
+import com.jayseeofficial.materialmusic.event.PlaylistCreatedEvent;
+import com.jayseeofficial.materialmusic.event.SongAddedToPlaylistEvent;
 import com.jayseeofficial.materialmusic.event.SongsLoadedEvent;
 
 import java.util.ArrayList;
@@ -49,11 +52,13 @@ public class SongManager {
     private List<Song> songs;
     private Map<String, Album> albums;
     private Map<String, Artist> artists;
+    private List<Playlist> playlists;
     private boolean isLoaded = false;
 
     private SongManager(Context context) {
         this.context = context;
         loadLibraryInBackground();
+        EventBus.getDefault().register(this);
     }
 
     private void loadLibraryInBackground() {
@@ -168,13 +173,16 @@ public class SongManager {
                 }
             }
             cursor.close();
-            isLoaded = true;
+            EventBus.getDefault().post(new SongsLoadedEvent());
 
             Collections.sort(songs,
                     (lhs, rhs) -> lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase())
             );
 
-            EventBus.getDefault().post(new SongsLoadedEvent());
+            // Playlists are a little different, as they're an internal thing
+            playlists = Application.getPlaylistManager().loadPlaylists();
+
+            isLoaded = true;
             EventBus.getDefault().post(new LibraryLoadedEvent());
         }).start();
     }
@@ -210,6 +218,13 @@ public class SongManager {
         return artistList;
     }
 
+    public Playlist getPlaylistById(int id) {
+        for (Playlist playlist : playlists) {
+            if (playlist.getId() == id) return playlist;
+        }
+        return null;
+    }
+
     public Uri getSongUri(Song song) {
         return Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.toString(song.getId()));
     }
@@ -221,4 +236,26 @@ public class SongManager {
     public Album getAlbum(Song song) {
         return albums.get(song.getAlbumKey());
     }
+
+    public List<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void addPlaylist(Playlist playlist) {
+        playlists.add(playlist);
+        savePlaylists();
+    }
+
+    private void savePlaylists() {
+        Application.getPlaylistManager().savePlaylists(playlists);
+    }
+
+    public void onEventAsync(PlaylistCreatedEvent event) {
+        addPlaylist(event.getPlaylist());
+    }
+
+    public void onEventAsync(SongAddedToPlaylistEvent event) {
+        getPlaylistById(event.getPlaylist().getId()).addSong(event.getSong());
+    }
+
 }
