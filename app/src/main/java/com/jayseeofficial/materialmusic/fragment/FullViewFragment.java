@@ -3,6 +3,7 @@ package com.jayseeofficial.materialmusic.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,9 @@ public class FullViewFragment extends Fragment {
 
     @InjectView(R.id.img_album_art)
     SquareImageView imgAlbumArt;
+
+    @InjectView(R.id.tb_main_full)
+    Toolbar tbMain;
 
     public FullViewFragment() {
     }
@@ -55,5 +59,9 @@ public class FullViewFragment extends Fragment {
                 .load("file://" + album.getAlbumArtPath())
                 .placeholder(R.drawable.ic_default_artwork)
                 .into(imgAlbumArt);
+    }
+
+    public Toolbar getToolbar() {
+        return tbMain;
     }
 }

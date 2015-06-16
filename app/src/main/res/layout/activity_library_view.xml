@@ -87,11 +87,6 @@
                 android:id="@+id/frame_full_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
-            <include
-                layout="@layout/fragment_full_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </RelativeLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -71,8 +72,9 @@ public class LibraryViewActivity extends BaseActivity {
     @InjectView(R.id.tb_controls)
     Toolbar tbControls;
 
-    @InjectView(R.id.tb_main_full)
-    Toolbar tbMainFull;
+    //@InjectView(R.id.tb_main_full)
+    //Toolbar tbMainFull;
+    FullViewFragment fullViewFragment;
 
     @InjectView(R.id.img_nav_header)
     ImageView imgNavHeader;
@@ -85,6 +87,9 @@ public class LibraryViewActivity extends BaseActivity {
 
     @InjectView(R.id.sb_position)
     SeekBar sbPosition;
+
+    @InjectView(R.id.frame_full_view)
+    FrameLayout frameFullView;
 
     @OnClick(R.id.btn_next)
     public void nextTrack() {
@@ -244,8 +249,9 @@ public class LibraryViewActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        if (fullViewFragment == null) fullViewFragment = new FullViewFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_full_view, new FullViewFragment())
+                .replace(R.id.frame_full_view, fullViewFragment)
                 .commit();
 
         if (savedInstanceState != null) {
@@ -256,14 +262,16 @@ public class LibraryViewActivity extends BaseActivity {
             @Override
             public void onPanelExpanded(View panel) {
                 tbControls.setVisibility(View.INVISIBLE);
-                tbMainFull.setVisibility(View.VISIBLE);
-                setSupportActionBar(tbMainFull);
+                fullViewFragment.getToolbar().setVisibility(View.VISIBLE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                setSupportActionBar(fullViewFragment.getToolbar());
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
                 tbControls.setVisibility(View.VISIBLE);
-                tbMainFull.setVisibility(View.INVISIBLE);
+                fullViewFragment.getToolbar().setVisibility(View.INVISIBLE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 setSupportActionBar(tbMain);
             }
         });
