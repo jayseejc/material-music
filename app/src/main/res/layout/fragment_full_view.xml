@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,18 +8,41 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_main_full"
         android:layout_width="match_parent"
-        android:layout_height="68dp"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         android:visibility="invisible" />
 
     <com.jayseeofficial.materialmusic.view.SquareImageView
         android:id="@+id/img_album_art"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txt_title"
+        android:layout_below="@+id/tb_main_full" />
+
+    <TextView
+        android:id="@+id/txt_title"
+        style="@android:style/TextAppearance.Large"
+        android:layout_above="@+id/txt_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        tools:text="This is a very long title for a very long song of very longness" />
+
+    <TextView
+        android:id="@id/txt_subtitle"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/include_media"
+        android:maxLines="1"
+        tools:text="This is a very long title for a very long album of very longness" />
 
     <include
-        layout="@layout/media_controls"
+        android:id="@+id/include_media"
+        layout="@layout/media_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
-</LinearLayout>
+</RelativeLayout>

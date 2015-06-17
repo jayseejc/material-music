@@ -259,20 +259,35 @@ public class LibraryViewActivity extends BaseActivity {
         } else setMode(Mode.SONGS);
 
         slidingPanel.setPanelSlideListener(new SlidingUpPanelLayout.SimplePanelSlideListener() {
+
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset > 0.25) enableFullView();
+                else enableMainView();
+            }
+
             @Override
             public void onPanelExpanded(View panel) {
-                tbControls.setVisibility(View.INVISIBLE);
-                fullViewFragment.getToolbar().setVisibility(View.VISIBLE);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                setSupportActionBar(fullViewFragment.getToolbar());
+                enableFullView();
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
+                enableMainView();
+            }
+
+            private void enableMainView() {
                 tbControls.setVisibility(View.VISIBLE);
                 fullViewFragment.getToolbar().setVisibility(View.INVISIBLE);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 setSupportActionBar(tbMain);
+            }
+
+            private void enableFullView() {
+                tbControls.setVisibility(View.INVISIBLE);
+                fullViewFragment.getToolbar().setVisibility(View.VISIBLE);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                setSupportActionBar(fullViewFragment.getToolbar());
             }
         });
 
