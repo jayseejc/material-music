@@ -27,13 +27,19 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".activity.LicensesActivity"
+        <activity
+            android:name=".activity.LicensesActivity"
             android:label="Open source licenses">
             <intent-filter>
                 <action android:name="com.jayseeofficial.intent.OPEN_SOURCE_LICENSES" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.jayseeofficial.intent.GOOGLE_LICENSES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+
         <receiver android:name=".receiver.NotificationReceiver" />
     </application>
 

@@ -3,4 +3,7 @@
     <Preference android:title="View open source licenses">
         <intent android:action="com.jayseeofficial.intent.OPEN_SOURCE_LICENSES" />
     </Preference>
+    <Preference android:title="Google open source licenses">
+        <intent android:action="com.jayseeofficial.intent.GOOGLE_LICENSES" />
+    </Preference>
 </PreferenceScreen>
