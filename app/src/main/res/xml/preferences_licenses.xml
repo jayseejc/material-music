@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference android:title="View open source licenses">
+        <intent android:action="com.jayseeofficial.intent.OPEN_SOURCE_LICENSES" />
+    </Preference>
+</PreferenceScreen>

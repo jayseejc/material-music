@@ -33,4 +33,14 @@ public class SettingsActivity extends BasePreferenceActivity {
         }
     }
 
+    public static class LicensesFragment extends PreferenceFragment{
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences_licenses, false);
+
+            addPreferencesFromResource(R.xml.preferences_licenses);
+        }
+    }
 }

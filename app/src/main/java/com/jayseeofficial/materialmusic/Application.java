@@ -17,10 +17,10 @@ public class Application extends android.app.Application {
 
         EventBus.getDefault().register(this);
 
+        playlistManager = FilePlaylistManager.getInstance(this);
         SongManager.init(this);
         SongPlayer.init(this);
         NotificationManager.init(this);
-        playlistManager = FilePlaylistManager.getInstance(this);
     }
 
     public static PlaylistManager getPlaylistManager() {

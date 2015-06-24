@@ -4,4 +4,7 @@
         android:fragment="com.jayseeofficial.materialmusic.activity.SettingsActivity$MainSettingsFragment"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="General" />
+    <header
+        android:fragment="com.jayseeofficial.materialmusic.activity.SettingsActivity$LicensesFragment"
+        android:title="Licenses" />
 </preference-headers>
