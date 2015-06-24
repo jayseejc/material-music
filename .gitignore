@@ -5,3 +5,5 @@
 .DS_Store
 /build
 /captures
+# Keep just the dummy file
+app/src/main/res/values/api_key.xml
