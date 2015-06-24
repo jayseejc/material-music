@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.jayseeofficial.materialmusic.R;
 
 import de.psdev.licensesdialog.LicensesDialog;
@@ -37,11 +38,7 @@ public class LicensesActivity extends BaseActivity {
 
             TextView textView = new TextView(this);
             textView.setLayoutParams(params);
-            // TODO uncomment this once play services are enabled
-            //textView.setText(GoogleApiAvalability.getOpenSourceSoftwareLicenseInfo(this));
-            String s = "COMING SOON!\n";
-            for (int i = 0; i < 10; i++) s += s;
-            textView.setText(s);
+            textView.setText(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this));
             scrollView.addView(textView);
 
             new AlertDialog.Builder(this)
